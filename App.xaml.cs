@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace RaizBarApp
+﻿namespace RaizBarApp
 {
     public partial class App : Application
     {

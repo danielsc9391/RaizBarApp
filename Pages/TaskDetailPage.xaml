@@ -5,8 +5,7 @@
              xmlns:pageModel="clr-namespace:RaizBarApp.PageModels"
              xmlns:models="clr-namespace:RaizBarApp.Models"
              x:DataType="pageModel:TaskDetailPageModel"
-             x:Class="RaizBarApp.Pages.TaskDetailPage"
-             Title="Task">
+             x:Class="RaizBarApp.Pages.TaskDetailPage">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem

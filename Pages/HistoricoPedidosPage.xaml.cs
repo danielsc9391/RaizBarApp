@@ -1,18 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using RaizBarApp.PageModels;
 
 namespace RaizBarApp.Pages
 {
     public partial class HistoricoPedidosPage : ContentPage
     {
+        private readonly HistoricoPedidosPageModel _viewModel;
+
         public HistoricoPedidosPage()
         {
             InitializeComponent();
-            BindingContext = new HistoricoPedidosPageModel();
+            _viewModel = Application.Current!.Handler!.MauiContext!.Services.GetRequiredService<HistoricoPedidosPageModel>();
+            BindingContext = _viewModel;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await _viewModel.CarregarAsync();
+            PedidosCollectionView.ItemsSource = _viewModel.PedidosHistoricos;
         }
     }
 }

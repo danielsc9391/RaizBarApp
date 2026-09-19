@@ -8,46 +8,50 @@ namespace RaizBarApp.PageModels;
 
 public class HistoricoPedidosPageModel : INotifyPropertyChanged
 {
-    private ObservableCollection<PedidoHistorico> _pedidosHistoricos = new ObservableCollection<PedidoHistorico>();
+    private readonly HistoricoPedidosService _historicoPedidosService;
 
     public ObservableCollection<PedidoHistorico> PedidosHistoricos
     {
-        get => _pedidosHistoricos;
-        set
-        {
-            if (_pedidosHistoricos != value)
-            {
-                _pedidosHistoricos = value;
-                OnPropertyChanged();
-            }
-        }
+        get => _historicoPedidosService.Pedidos;
     }
 
     public ICommand VoltarCommand { get; }
+    public ICommand RemoverPedidoCommand { get; }
 
-    public HistoricoPedidosPageModel()
+    public HistoricoPedidosPageModel(HistoricoPedidosService historicoPedidosService)
     {
+        _historicoPedidosService = historicoPedidosService;
         VoltarCommand = new Command(async () => await VoltarAsync());
-        
-        // Load historical orders
-        LoadHistoricoPedidos();
+        RemoverPedidoCommand = new Command<PedidoHistorico>(async pedido => await RemoverPedidoAsync(pedido));
     }
 
-    private void LoadHistoricoPedidos()
+    public Task CarregarAsync()
     {
-        // Clear current list
-        PedidosHistoricos.Clear();
-        
-        // Add all historical orders from the static property in PedidoViewModel
-        foreach (var pedido in PedidoViewModel.HistoricoPedidos)
-        {
-            PedidosHistoricos.Add(pedido);
-        }
+        return _historicoPedidosService.LoadAsync();
     }
 
     private async Task VoltarAsync()
     {
         await Application.Current.MainPage.Navigation.PopAsync();
+    }
+
+    private async Task RemoverPedidoAsync(PedidoHistorico? pedido)
+    {
+        if (pedido is null)
+        {
+            return;
+        }
+
+        var confirmou = await Shell.Current.DisplayAlertAsync(
+            "Eliminar pedido",
+            "Eliminar este pedido do histórico?",
+            "Eliminar",
+            "Cancelar");
+
+        if (confirmou)
+        {
+            await _historicoPedidosService.RemoveAsync(pedido);
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

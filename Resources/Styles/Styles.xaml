@@ -358,6 +358,7 @@
     -->
 
     <Style TargetType="ContentPage">
+        <Setter Property="Shell.NavBarIsVisible" Value="False" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
     </Style>
 
@@ -429,24 +430,24 @@
 
     <!-- Explicit button styles for specific actions -->
     <Style x:Key="ActionDangerButtonStyle" TargetType="Button">
-        <Setter Property="BackgroundColor" Value="Red" />
+        <Setter Property="BackgroundColor" Value="#C85C5C" />
         <Setter Property="TextColor" Value="White" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="5"/>
         <Setter Property="Padding" Value="14,10"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
     </Style>
 
     <Style x:Key="ActionConfirmButtonStyle" TargetType="Button">
-        <Setter Property="BackgroundColor" Value="Green" />
+        <Setter Property="BackgroundColor" Value="#4F9D69" />
         <Setter Property="TextColor" Value="White" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="5"/>
         <Setter Property="Padding" Value="14,10"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>

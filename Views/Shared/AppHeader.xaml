@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RaizBarApp.Views.Shared.AppHeader"
              HeightRequest="60">
-  <Grid>
+  <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
     <Image Source="logo.svg"
            HeightRequest="40"
            WidthRequest="40"
+           Aspect="AspectFit"
            HorizontalOptions="Center"
            VerticalOptions="Center" />
   </Grid>

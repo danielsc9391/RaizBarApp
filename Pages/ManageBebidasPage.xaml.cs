@@ -1,4 +1,5 @@
 using RaizBarApp.PageModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RaizBarApp.Pages
 {
@@ -9,7 +10,7 @@ namespace RaizBarApp.Pages
         public ManageBebidasPage()
         {
             InitializeComponent();
-            _viewModel = new ManageBebidasPageModel();
+            _viewModel = Application.Current!.Handler!.MauiContext!.Services.GetRequiredService<ManageBebidasPageModel>();
             BindingContext = _viewModel;
         }
     }

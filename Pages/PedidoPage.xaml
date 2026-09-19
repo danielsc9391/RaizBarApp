@@ -3,19 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pageModels="clr-namespace:RaizBarApp.PageModels"
              xmlns:models="clr-namespace:RaizBarApp.Models"
-             xmlns:controls="clr-namespace:RaizBarApp.Pages.Controls"
+             xmlns:fonts="clr-namespace:Fonts"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:shared="clr-namespace:RaizBarApp.Views.Shared"
              x:Class="RaizBarApp.Pages.PedidoPage"
              x:DataType="pageModels:PedidoViewModel"
-             x:Name="OverviewPage"
-             Title="Pedido de Bebidas">
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+             x:Name="OverviewPage">
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
@@ -55,13 +48,13 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Bebida">
-                                <Frame Padding="10" Margin="5" HasShadow="True" BackgroundColor="White">
+                                <Frame Padding="10" Margin="5" CornerRadius="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                                     <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
-                                        <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" />
-                                        <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" />
+                                        <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                        <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                         <Button Grid.Column="2" Text="-" WidthRequest="40" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:PedidoViewModel}}, Path=RemoverQuantidadeCommand}" CommandParameter="{Binding .}" />
                                         <StackLayout Grid.Column="3" Orientation="Horizontal" Spacing="5">
-                                            <Label Text="{Binding Quantidade}" VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="40" />
+                                            <Label Text="{Binding Quantidade}" VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="30" HorizontalTextAlignment="Center" />
                                             <Button Text="+" WidthRequest="40" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:PedidoViewModel}}, Path=AdicionarQuantidadeCommand}" CommandParameter="{Binding .}" />
                                         </StackLayout>
                                     </Grid>
@@ -69,18 +62,13 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                    <Grid Grid.Row="2" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}" Margin="5,0">
-                        <Label Text="{Binding Total, StringFormat='Total: {}{0:C}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" />
+                    <Grid Grid.Row="2" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" Margin="5,0">
+                        <Label Text="{Binding Total, StringFormat='Total: {}{0:C}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
                     </Grid>
-                    <Button Grid.Row="3" Text="Fechar Pedido" Command="{Binding FecharPedidoCommand}" Style="{StaticResource ActionConfirmButtonStyle}" Margin="10,0" />
-                    <Button Grid.Row="4" Text="Limpar Pedido" Command="{Binding LimparPedidoCommand}" Style="{StaticResource ActionDangerButtonStyle}" Margin="10,0" />
+                    <Button Grid.Row="3" Text="Fechar Pedido" ImageSource="checkmark.svg" Command="{Binding FecharPedidoCommand}" Style="{StaticResource ActionConfirmButtonStyle}" Margin="10,0" />
+                    <Button Grid.Row="4" Text="Limpar Pedido" ImageSource="delete.svg" Command="{Binding LimparPedidoCommand}" Style="{StaticResource ActionDangerButtonStyle}" Margin="10,0" />
                 </Grid>
         </ScrollView>
 
-        <controls:AddButton
-            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
-            Command="{Binding AddBebidaCommand}"
-            ToolTipProperties.Text="Add bebida"
-            SemanticProperties.Description="Add bebida" />
     </Grid>
 </ContentPage>

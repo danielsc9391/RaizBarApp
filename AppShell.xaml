@@ -7,6 +7,7 @@
     xmlns:pages="clr-namespace:RaizBarApp.Pages"
     xmlns:shared="clr-namespace:RaizBarApp.Views.Shared"
     Shell.FlyoutBehavior="Flyout"
+    Shell.NavBarIsVisible="False"
     Title="RaizBarApp">
 
     <Shell.FlyoutHeader>

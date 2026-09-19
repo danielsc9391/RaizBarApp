@@ -1,6 +1,7 @@
 using RaizBarApp.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -8,22 +9,14 @@ namespace RaizBarApp.PageModels
 {
     public class ManageBebidasPageModel : INotifyPropertyChanged
     {
-        private ObservableCollection<Bebida> _bebidas = new ObservableCollection<Bebida>();
-        private string _novaBebidaNome;
-        private string _novaBebidaPreco;
-        private readonly BebidaRepository _bebidaRepository;
+        private readonly BebidasService _bebidasService;
+        private string _novaBebidaNome = string.Empty;
+        private string _novaBebidaPreco = string.Empty;
+        private Bebida? _bebidaEmEdicao;
 
         public ObservableCollection<Bebida> Bebidas
         {
-            get => _bebidas;
-            set
-            {
-                if (_bebidas != value)
-                {
-                    _bebidas = value ?? new ObservableCollection<Bebida>();
-                    OnPropertyChanged();
-                }
-            }
+            get => _bebidasService.Bebidas;
         }
 
         public string NovaBebidaNome
@@ -52,61 +45,111 @@ namespace RaizBarApp.PageModels
             }
         }
 
+        public bool EstaAEditar => _bebidaEmEdicao is not null;
+
+        public string TextoFormulario => EstaAEditar ? "Guardar alterações" : "Adicionar";
+
         public ICommand AddBebidaCommand { get; }
         public ICommand EditBebidaCommand { get; }
         public ICommand RemoveBebidaCommand { get; }
+        public ICommand CancelarEdicaoCommand { get; }
 
-        public ManageBebidasPageModel()
+        public ManageBebidasPageModel(BebidasService bebidasService)
         {
-            _bebidaRepository = new BebidaRepository();
-            AddBebidaCommand = new Command(async () => await AddBebidaAsync());
+            _bebidasService = bebidasService;
+            AddBebidaCommand = new Command(async () => await GuardarBebidaAsync());
             EditBebidaCommand = new Command<Bebida>(EditBebida);
-            RemoveBebidaCommand = new Command<Bebida>(RemoveBebida);
-
-            // Load beverages from persistence
-            LoadBebidasAsync().Wait();
+            RemoveBebidaCommand = new Command<Bebida>(async bebida => await RemoveBebidaAsync(bebida));
+            CancelarEdicaoCommand = new Command(CancelarEdicao);
         }
 
-        private async Task LoadBebidasAsync()
+        private void EditBebida(Bebida? bebida)
         {
-            var bebidas = await _bebidaRepository.LoadBebidasAsync();
-            Bebidas.Clear();
-            foreach (var bebida in bebidas)
+            if (bebida is null)
             {
-                Bebidas.Add(bebida);
+                return;
+            }
+
+            _bebidaEmEdicao = bebida;
+            NovaBebidaNome = bebida.Nome;
+            NovaBebidaPreco = bebida.Preco.ToString("0.00", CultureInfo.GetCultureInfo("pt-PT"));
+            OnPropertyChanged(nameof(EstaAEditar));
+            OnPropertyChanged(nameof(TextoFormulario));
+        }
+
+        private async Task GuardarBebidaAsync()
+        {
+            if (string.IsNullOrWhiteSpace(NovaBebidaNome))
+            {
+                await Shell.Current.DisplayAlertAsync("Erro", "Por favor, introduza o nome da bebida.", "OK");
+                return;
+            }
+
+            if (!decimal.TryParse(NovaBebidaPreco, NumberStyles.Number, CultureInfo.GetCultureInfo("pt-PT"), out var preco) || preco < 0)
+            {
+                await Shell.Current.DisplayAlertAsync("Erro", "Por favor, introduza um preço válido.", "OK");
+                return;
+            }
+
+            if (_bebidaEmEdicao is null)
+            {
+                await _bebidasService.AddAsync(new Bebida
+                {
+                    Nome = NovaBebidaNome.Trim(),
+                    Preco = preco
+                });
+            }
+            else
+            {
+                _bebidaEmEdicao.Nome = NovaBebidaNome.Trim();
+                _bebidaEmEdicao.Preco = preco;
+                await _bebidasService.UpdateAsync(_bebidaEmEdicao);
+            }
+
+            CancelarEdicao();
+        }
+
+        private async Task RemoveBebidaAsync(Bebida? bebida)
+        {
+            if (bebida is null)
+            {
+                return;
+            }
+
+            var confirmou = await Shell.Current.DisplayAlertAsync(
+                "Eliminar bebida?",
+                $"Tens a certeza que queres eliminar '{bebida.Nome}'? Esta ação não pode ser desfeita.",
+                "Eliminar",
+                "Cancelar");
+
+            if (confirmou)
+            {
+                await _bebidasService.RemoveAsync(bebida);
             }
         }
 
-        private async Task AddBebidaAsync()
+        private void CancelarEdicao()
         {
-            // Create a new page for adding beverage and show it as a modal
-            var addBebidaPage = new Pages.AddBebidaPage(this);
-            await Application.Current.MainPage.Navigation.PushModalAsync(addBebidaPage, true);
+            _bebidaEmEdicao = null;
+            NovaBebidaNome = string.Empty;
+            NovaBebidaPreco = string.Empty;
+            OnPropertyChanged(nameof(EstaAEditar));
+            OnPropertyChanged(nameof(TextoFormulario));
         }
 
-        private void EditBebida(Bebida bebida)
+        public Task AdicionarBebidaAsync(Bebida bebida)
         {
-            // For now, just navigate to the AddBebidaPage with pre-filled data for editing
-            // In a real implementation, you might want to create a separate edit page or modal
-            if (bebida != null)
-            {
-                var addBebidaPage = new Pages.AddBebidaPage(this, bebida);
-                Application.Current.MainPage.Navigation.PushModalAsync(addBebidaPage, true);
-            }
+            return _bebidasService.AddAsync(bebida);
         }
 
-        private async void RemoveBebida(Bebida bebida)
+        public Task AtualizarBebidaAsync(Bebida bebida)
         {
-            if (bebida != null)
-            {
-                Bebidas.Remove(bebida);
-                await _bebidaRepository.RemoveBebidaAsync(bebida);
-            }
+            return _bebidasService.UpdateAsync(bebida);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

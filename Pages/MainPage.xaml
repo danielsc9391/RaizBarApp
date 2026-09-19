@@ -8,8 +8,7 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="RaizBarApp.Pages.MainPage"
              x:DataType="pageModels:PedidoViewModel"
-             x:Name="OverviewPage"
-             Title="Pedido de Bebidas">
+             x:Name="OverviewPage">
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
@@ -71,8 +70,8 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                        <Grid Grid.Row="2" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}" Margin="5,0">
-                            <Label Text="{Binding Total, StringFormat='Total: {}{0:C}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        <Grid Grid.Row="2" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" Margin="5,0">
+                            <Label Text="{Binding Total, StringFormat='Total: {}{0:C}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
                         </Grid>
                         <Button Grid.Row="3" Text="Limpar Pedido" Command="{Binding LimparPedidoCommand}" Style="{StaticResource ActionDangerButtonStyle}" Margin="10,0" />
                         <Button Grid.Row="4" Text="Histórico de Pedidos" Command="{Binding VerHistoricoCommand}" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}" TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" Margin="10,0" />

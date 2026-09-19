@@ -44,6 +44,9 @@ namespace RaizBarApp
             builder.Services.AddLogging(configure => configure.AddDebug());
 
             builder.Services.AddSingleton<ProjectRepository>();
+            builder.Services.AddSingleton<BebidaRepository>();
+            builder.Services.AddSingleton<BebidasService>();
+            builder.Services.AddSingleton<HistoricoPedidosService>();
             builder.Services.AddSingleton<TaskRepository>();
             builder.Services.AddSingleton<CategoryRepository>();
             builder.Services.AddSingleton<TagRepository>();
@@ -53,6 +56,8 @@ namespace RaizBarApp
             builder.Services.AddSingleton<MainPageModel>();
             builder.Services.AddSingleton<ProjectListPageModel>();
             builder.Services.AddSingleton<ManageMetaPageModel>();
+            builder.Services.AddSingleton<ManageBebidasPageModel>();
+            builder.Services.AddSingleton<HistoricoPedidosPageModel>();
 
             builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");

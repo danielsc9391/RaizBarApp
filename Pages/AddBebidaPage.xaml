@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RaizBarApp.Pages.AddBebidaPage"
-             Title="Adicionar Bebida">
+             x:Class="RaizBarApp.Pages.AddBebidaPage">
     <ContentPage.Content>
         <Grid Padding="20" RowSpacing="15">
             <Grid.RowDefinitions>

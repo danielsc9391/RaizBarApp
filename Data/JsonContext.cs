@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 [JsonSerializable(typeof(Category))]
 [JsonSerializable(typeof(Tag))]
 [JsonSerializable(typeof(List<Bebida>))]
+[JsonSerializable(typeof(List<PedidoHistorico>))]
 [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
 public partial class JsonContext : JsonSerializerContext
 {

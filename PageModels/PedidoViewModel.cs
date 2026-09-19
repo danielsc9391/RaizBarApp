@@ -8,24 +8,13 @@ namespace RaizBarApp.PageModels;
 
 public class PedidoViewModel : INotifyPropertyChanged
 {
-    private ObservableCollection<Bebida> _bebidas = new ObservableCollection<Bebida>();
+    private readonly BebidasService _bebidasService;
+    private readonly HistoricoPedidosService _historicoPedidosService;
     private decimal _total;
-    private string _novaBebidaNome;
-    private string _novaBebidaPreco;
-    private static List<PedidoHistorico> _historicoPedidos = new List<PedidoHistorico>();
 
     public ObservableCollection<Bebida> Bebidas
     {
-        get => _bebidas;
-        set
-        {
-            if (_bebidas != value)
-            {
-                _bebidas = value ?? new ObservableCollection<Bebida>();
-                OnPropertyChanged();
-                CalcularTotal();
-            }
-        }
+        get => _bebidasService.Bebidas;
     }
 
     public decimal Total
@@ -41,52 +30,21 @@ public class PedidoViewModel : INotifyPropertyChanged
         }
     }
 
-    public string NovaBebidaNome
-    {
-        get => _novaBebidaNome;
-        set
-        {
-            if (_novaBebidaNome != value)
-            {
-                _novaBebidaNome = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public string NovaBebidaPreco
-    {
-        get => _novaBebidaPreco;
-        set
-        {
-            if (_novaBebidaPreco != value)
-            {
-                _novaBebidaPreco = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
     public ICommand AdicionarQuantidadeCommand { get; }
     public ICommand RemoverQuantidadeCommand { get; }
     public ICommand LimparPedidoCommand { get; }
-    public ICommand AddBebidaCommand { get; }
     public ICommand FecharPedidoCommand { get; }
     public ICommand VerHistoricoCommand { get; }
 
-    public PedidoViewModel()
+    public PedidoViewModel(BebidasService bebidasService, HistoricoPedidosService historicoPedidosService)
     {
+        _bebidasService = bebidasService;
+        _historicoPedidosService = historicoPedidosService;
         AdicionarQuantidadeCommand = new Command<Bebida>(AdicionarQuantidade);
         RemoverQuantidadeCommand = new Command<Bebida>(RemoverQuantidade);
-        LimparPedidoCommand = new Command(LimparPedido);
-        AddBebidaCommand = new Command(async () => await AddBebidaAsync());
+        LimparPedidoCommand = new Command(async () => await LimparPedidoAsync());
         FecharPedidoCommand = new Command(async () => await FecharPedidoAsync());
         VerHistoricoCommand = new Command(async () => await VerHistoricoAsync());
-        
-        // Adicionando algumas bebidas de exemplo
-        Bebidas.Add(new Bebida { Nome = "Cerveja", Preco = 8.50m });
-        Bebidas.Add(new Bebida { Nome = "Vinho", Preco = 25.00m });
-        Bebidas.Add(new Bebida { Nome = "Refrigerante", Preco = 6.00m });
     }
 
     private void AdicionarQuantidade(Bebida bebida)
@@ -107,6 +65,20 @@ public class PedidoViewModel : INotifyPropertyChanged
         }
     }
 
+    private async Task LimparPedidoAsync()
+    {
+        var confirmou = await Shell.Current.DisplayAlertAsync(
+            "Confirmar",
+            "Tens a certeza que queres limpar o pedido atual?",
+            "Limpar",
+            "Cancelar");
+
+        if (confirmou)
+        {
+            LimparPedido();
+        }
+    }
+
     private void LimparPedido()
     {
         foreach (var bebida in Bebidas)
@@ -119,13 +91,6 @@ public class PedidoViewModel : INotifyPropertyChanged
     private void CalcularTotal()
     {
         Total = Bebidas.Sum(b => b.Subtotal);
-    }
-
-    private async Task AddBebidaAsync()
-    {
-        // Create a new page for adding beverage and show it as a modal
-        var addBebidaPage = new Pages.AddBebidaPage(this);
-        await Application.Current.MainPage.Navigation.PushModalAsync(addBebidaPage, true);
     }
 
     private async Task FecharPedidoAsync()
@@ -145,8 +110,7 @@ public class PedidoViewModel : INotifyPropertyChanged
                 Total = Total
             };
 
-            // Add to history
-            _historicoPedidos.Add(pedidoHistorico);
+            await _historicoPedidosService.AddAsync(pedidoHistorico);
 
             // Clear current order
             LimparPedido();
@@ -157,8 +121,6 @@ public class PedidoViewModel : INotifyPropertyChanged
     {
         await Application.Current.MainPage.Navigation.PushAsync(new Pages.HistoricoPedidosPage());
     }
-
-    public static List<PedidoHistorico> HistoricoPedidos => _historicoPedidos;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

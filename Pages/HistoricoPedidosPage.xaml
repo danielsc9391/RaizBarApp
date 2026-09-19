@@ -5,23 +5,29 @@
              xmlns:models="clr-namespace:RaizBarApp.Models"
              xmlns:shared="clr-namespace:RaizBarApp.Views.Shared"
              x:Class="RaizBarApp.Pages.HistoricoPedidosPage"
-             x:DataType="pageModels:HistoricoPedidosPageModel"
-             Title="Histórico de Pedidos">
+             x:Name="HistoricoRoot"
+             x:DataType="pageModels:HistoricoPedidosPageModel">
 
     <Grid RowDefinitions="Auto,*">
         <shared:AppHeader Grid.Row="0" />
-        <ContentPage.Content>
-            <Grid Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
+        <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" Text="Histórico de Pedidos" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1"/>
+                  <Label Grid.Row="0" Text="Histórico de Pedidos" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1"
+                      TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
 
                 <CollectionView Grid.Row="1" ItemsSource="{Binding PedidosHistoricos}"
                             x:Name="PedidosCollectionView"
                             SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="Ainda não há pedidos no histórico"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                    </CollectionView.EmptyView>
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
                     </CollectionView.ItemsLayout>
@@ -29,29 +35,35 @@
                         <DataTemplate x:DataType="models:PedidoHistorico">
                             <Frame Padding="10" Margin="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                                 <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
-                                    <Label Grid.Row="0" Text="{Binding DataHora, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Style="{StaticResource Title3}" />
+                                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <Label Grid.Column="0" Text="{Binding DataHora, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Style="{StaticResource Title3}"
+                                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                        <Button Grid.Column="1" ImageSource="delete.svg" AutomationProperties.Name="Eliminar pedido do histórico"
+                                                WidthRequest="44" HeightRequest="40" Padding="8"
+                                                Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.RemoverPedidoCommand}"
+                                                CommandParameter="{Binding .}" Style="{StaticResource ActionDangerButtonStyle}" />
+                                    </Grid>
                                     <StackLayout Grid.Row="1" Spacing="5">
-                                        <Label Text="Itens:" Style="{StaticResource Title4}" />
-                                        <CollectionView ItemsSource="{Binding Bebidas}" SelectionMode="None">
-                                            <CollectionView.ItemsLayout>
-                                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
-                                            </CollectionView.ItemsLayout>
-                                            <CollectionView.ItemTemplate>
+                                        <Label Text="Itens:" Style="{StaticResource Title4}"
+                                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Bebidas}" Spacing="5">
+                                            <BindableLayout.ItemTemplate>
                                                 <DataTemplate x:DataType="models:Bebida">
                                                     <Label Text="{Binding Nome}"
                                                         HorizontalOptions="StartAndExpand"
-                                                        FontSize="14" />
+                                                        FontSize="14"
+                                                        TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                                 </DataTemplate>
-                                            </CollectionView.ItemTemplate>
-                                        </CollectionView>
+                                            </BindableLayout.ItemTemplate>
+                                        </VerticalStackLayout>
                                     </StackLayout>
-                                    <Label Grid.Row="2" Text="{Binding Total, StringFormat='Total: {}{0:C}'}" Style="{StaticResource Title3}" />
+                                     <Label Grid.Row="2" Text="{Binding Total, StringFormat='Total: {}{0:C}'}" Style="{StaticResource Title3}"
+                                         TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                 </Grid>
                             </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </Grid>
-        </ContentPage.Content>
+        </Grid>
     </Grid>
 </ContentPage>

@@ -5,47 +5,59 @@
              xmlns:models="clr-namespace:RaizBarApp.Models"
              xmlns:shared="clr-namespace:RaizBarApp.Views.Shared"
              x:Class="RaizBarApp.Pages.ManageBebidasPage"
-             x:DataType="pageModels:ManageBebidasPageModel"
-             Title="Gerir Bebidas">
+             x:Name="ManageBebidasRoot"
+             x:DataType="pageModels:ManageBebidasPageModel">
 
     <Grid RowDefinitions="Auto,*">
         <shared:AppHeader Grid.Row="0" />
-        <ContentPage.Content>
-            <Grid Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
+        <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" Text="Lista de Bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1"/>
+                <Border Grid.Row="0" Padding="16" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Gerir bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        <Entry Placeholder="Nome da bebida" Text="{Binding NovaBebidaNome}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        <Entry Placeholder="Preço (€)" Keyboard="Numeric" Text="{Binding NovaBebidaPreco}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        <HorizontalStackLayout Spacing="10">
+                            <Button Text="{Binding TextoFormulario}" Command="{Binding AddBebidaCommand}" Style="{StaticResource ActionConfirmButtonStyle}" HorizontalOptions="FillAndExpand" />
+                            <Button Text="Cancelar" Command="{Binding CancelarEdicaoCommand}" IsVisible="{Binding EstaAEditar}" Style="{StaticResource ActionDangerButtonStyle}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
 
                 <CollectionView Grid.Row="1" ItemsSource="{Binding Bebidas}"
                             Margin="-7.5,0"
                             MinimumHeightRequest="250"
                             x:Name="BebidasCollectionView"
                             SelectionMode="None">
+                            <CollectionView.EmptyView>
+                            <Label Text="Ainda não existem bebidas adicionadas."
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                            </CollectionView.EmptyView>
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Bebida">
-                            <Frame Padding="10" Margin="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                            <Frame Padding="12" Margin="5" CornerRadius="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
                                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                                    <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" />
-                                    <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" />
-                                    <StackLayout Grid.Column="2" Orientation="Horizontal" Spacing="5">
-                                        <Button Text="Editar" WidthRequest="60" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:ManageBebidasPageModel}}, Path=EditBebidaCommand}" CommandParameter="{Binding .}" />
-                                        <Button Text="Remover" WidthRequest="80" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:ManageBebidasPageModel}}, Path=RemoveBebidaCommand}" CommandParameter="{Binding .}" BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
-                                    </StackLayout>
+                                    <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                    <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                    <HorizontalStackLayout Grid.Column="2" Spacing="5">
+                                        <Button Text="Editar" HeightRequest="40" Command="{Binding Source={x:Reference ManageBebidasRoot}, Path=BindingContext.EditBebidaCommand}" CommandParameter="{Binding .}" />
+                                        <Button ImageSource="delete.svg" AutomationProperties.Name="Eliminar bebida" WidthRequest="44" HeightRequest="40" Padding="8" Command="{Binding Source={x:Reference ManageBebidasRoot}, Path=BindingContext.RemoveBebidaCommand}" CommandParameter="{Binding .}" Style="{StaticResource ActionDangerButtonStyle}" />
+                                    </HorizontalStackLayout>
                                 </Grid>
                             </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Button Grid.Row="2" Text="Adicionar Bebida" Command="{Binding AddBebidaCommand}" BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" Margin="10,0" />
-            </Grid>
-        </ContentPage.Content>
+        </Grid>
     </Grid>
 </ContentPage>

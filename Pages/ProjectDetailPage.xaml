@@ -8,8 +8,7 @@
              xmlns:controls="clr-namespace:RaizBarApp.Pages.Controls"
              xmlns:fonts="clr-namespace:Fonts"
              x:Class="RaizBarApp.Pages.ProjectDetailPage"
-             x:DataType="pageModels:ProjectDetailPageModel"
-             Title="Project">
+             x:DataType="pageModels:ProjectDetailPageModel">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem

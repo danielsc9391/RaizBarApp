@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="RaizBarApp.Pages.Controls.AddButton"
     ImageSource="{StaticResource IconAdd}" 
-    BackgroundColor="{StaticResource Primary}" 
+    BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}"
     CornerRadius="30" 
     HeightRequest="60" 
     WidthRequest="60" 
