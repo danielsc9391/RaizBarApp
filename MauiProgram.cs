@@ -8,8 +8,10 @@ namespace RaizBarApp
     {
         public static MauiApp CreateMauiApp()
         {
-            var builder = MauiApp.CreateBuilder();
-            builder
+            try
+            {
+                var builder = MauiApp.CreateBuilder();
+                builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
                 .ConfigureSyncfusionToolkit()
@@ -38,10 +40,8 @@ namespace RaizBarApp
                     fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
                 });
 
-#if DEBUG
-    		builder.Logging.AddDebug();
-    		builder.Services.AddLogging(configure => configure.AddDebug());
-#endif
+            builder.Logging.AddDebug();
+            builder.Services.AddLogging(configure => configure.AddDebug());
 
             builder.Services.AddSingleton<ProjectRepository>();
             builder.Services.AddSingleton<TaskRepository>();
@@ -57,7 +57,15 @@ namespace RaizBarApp
             builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
 
-            return builder.Build();
+                var app = builder.Build();
+                StartupDiagnostics.Log("MauiProgram.CreateMauiApp completed");
+                return app;
+            }
+            catch (Exception exception)
+            {
+                StartupDiagnostics.LogException("MauiProgram.CreateMauiApp", exception);
+                throw;
+            }
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using RaizBarApp.Models;
 
 namespace RaizBarApp.Data
@@ -36,10 +35,7 @@ namespace RaizBarApp.Data
                     return _bebidas;
                 }
 
-                var bebidas = JsonSerializer.Deserialize<List<Bebida>>(json, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var bebidas = System.Text.Json.JsonSerializer.Deserialize(json, JsonContext.Default.ListBebida);
 
                 _bebidas = bebidas ?? new List<Bebida>();
                 return _bebidas;
@@ -57,10 +53,7 @@ namespace RaizBarApp.Data
             try
             {
                 _bebidas = bebidas ?? new List<Bebida>();
-                var json = JsonSerializer.Serialize(_bebidas, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
+                var json = System.Text.Json.JsonSerializer.Serialize(_bebidas, JsonContext.Default.ListBebida);
                 await File.WriteAllTextAsync(_filePath, json);
             }
             catch (Exception ex)

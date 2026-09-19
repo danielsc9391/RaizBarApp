@@ -8,9 +8,17 @@ namespace RaizBarApp
     {
         public AppShell()
         {
-            InitializeComponent();
-            var currentTheme = Application.Current!.RequestedTheme;
-            ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
+            try
+            {
+                InitializeComponent();
+                var currentTheme = Application.Current?.RequestedTheme ?? AppTheme.Unspecified;
+                ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
+            }
+            catch (Exception exception)
+            {
+                StartupDiagnostics.LogException("AppShell startup", exception);
+                throw;
+            }
         }
         public static async Task DisplaySnackbarAsync(string message)
         {

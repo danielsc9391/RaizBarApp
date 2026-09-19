@@ -24,7 +24,7 @@ namespace RaizBarApp.Data
 
         public async Task LoadSeedDataAsync()
         {
-            ClearTables();
+            await ClearTablesAsync();
 
             await using Stream templateStream = await FileSystem.OpenAppPackageFileAsync(_seedDataFilePath);
 
@@ -83,20 +83,13 @@ namespace RaizBarApp.Data
             }
         }
 
-        private async void ClearTables()
+        private async Task ClearTablesAsync()
         {
-            try
-            {
-                await Task.WhenAll(
-                    _projectRepository.DropTableAsync(),
-                    _taskRepository.DropTableAsync(),
-                    _tagRepository.DropTableAsync(),
-                    _categoryRepository.DropTableAsync());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            await Task.WhenAll(
+                _projectRepository.DropTableAsync(),
+                _taskRepository.DropTableAsync(),
+                _tagRepository.DropTableAsync(),
+                _categoryRepository.DropTableAsync());
         }
     }
 }
