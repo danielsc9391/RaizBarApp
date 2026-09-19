@@ -1,7 +1,7 @@
+using RaizBarApp.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
-using RaizBarApp.Models;
 
 namespace RaizBarApp.Services;
 
@@ -30,6 +30,16 @@ public sealed class HistoricoPedidosService
         ArgumentNullException.ThrowIfNull(pedido);
         await _initializationTask;
         Pedidos.Add(pedido);
+        // Re-sort the collection to ensure newest orders appear first
+        var sortedPedidos = Pedidos.OrderByDescending(p => p.DataHora).ToList();
+        await MainThread.InvokeOnMainThreadAsync(() =>
+        {
+            Pedidos.Clear();
+            foreach (var sortedPedido in sortedPedidos)
+            {
+                Pedidos.Add(sortedPedido);
+            }
+        });
         await SaveAsync();
     }
 
@@ -40,6 +50,16 @@ public sealed class HistoricoPedidosService
 
         if (Pedidos.Remove(pedido))
         {
+            // Re-sort the collection to ensure newest orders appear first
+            var sortedPedidos = Pedidos.OrderByDescending(p => p.DataHora).ToList();
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Pedidos.Clear();
+                foreach (var sortedPedido in sortedPedidos)
+                {
+                    Pedidos.Add(sortedPedido);
+                }
+            });
             await SaveAsync();
         }
     }
@@ -92,14 +112,14 @@ public sealed class HistoricoPedidosService
         return MainThread.InvokeOnMainThreadAsync(() =>
         {
             Pedidos.Clear();
-            foreach (var pedido in pedidos)
+            foreach (var pedido in pedidos.OrderByDescending(p => p.DataHora))
             {
                 Pedidos.Add(pedido);
             }
         });
     }
 
-    private async Task SaveAsync()
+    public async Task SaveAsync()
     {
         Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
         var json = JsonSerializer.Serialize(Pedidos.ToList(), JsonContext.Default.ListPedidoHistorico);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1169 901" preserveAspectRatio="xMidYMid meet">
     <mask id="brand-logo">
-        <image href="../Images/logo.svg" width="1169" height="901" preserveAspectRatio="xMidYMid meet" />
+        <image href="../Images/logo.png" width="1169" height="901" preserveAspectRatio="xMidYMid meet" />
     </mask>
     <rect width="1169" height="901" fill="#FFE7CD" mask="url(#brand-logo)" />
 </svg>

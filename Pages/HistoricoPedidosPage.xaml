@@ -4,13 +4,18 @@
              xmlns:pageModels="clr-namespace:RaizBarApp.PageModels"
              xmlns:models="clr-namespace:RaizBarApp.Models"
              xmlns:shared="clr-namespace:RaizBarApp.Views.Shared"
+             xmlns:controls="clr-namespace:RaizBarApp.Pages.Controls"
              x:Class="RaizBarApp.Pages.HistoricoPedidosPage"
              x:Name="HistoricoRoot"
              x:DataType="pageModels:HistoricoPedidosPageModel">
 
+    <ContentPage.Resources>
+        <controls:EuroCurrencyConverter x:Key="EuroCurrencyConverter" />
+    </ContentPage.Resources>
+
     <Grid RowDefinitions="Auto,*">
-        <shared:AppHeader Grid.Row="0" />
-        <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
+        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" />
+        <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}" VerticalOptions="Fill">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -21,6 +26,8 @@
 
                 <CollectionView Grid.Row="1" ItemsSource="{Binding PedidosHistoricos}"
                             x:Name="PedidosCollectionView"
+                            MinimumHeightRequest="250"
+                            VerticalOptions="Fill"
                             SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Label Text="Ainda não há pedidos no histórico"
@@ -33,23 +40,45 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:PedidoHistorico">
-                            <Frame Padding="10" Margin="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                                <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
-                                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <Frame Padding="10" Margin="5" HasShadow="True" IsVisible="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                                <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="5" IsVisible="True">
+                                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10" IsVisible="True">
                                         <Label Grid.Column="0" Text="{Binding DataHora, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Style="{StaticResource Title3}"
+                                               IsVisible="True"
                                                TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                                        <Button Grid.Column="1" ImageSource="delete.svg" AutomationProperties.Name="Eliminar pedido do histórico"
-                                                WidthRequest="44" HeightRequest="40" Padding="8"
-                                                Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.RemoverPedidoCommand}"
-                                                CommandParameter="{Binding .}" Style="{StaticResource ActionDangerButtonStyle}" />
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto" ColumnSpacing="5">
+                                            <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" Padding="0"
+                                                    HorizontalOptions="Center" VerticalOptions="Center"
+                                                    BackgroundColor="#C85C5C" StrokeThickness="0"
+                                                    AutomationProperties.Name="Eliminar pedido do histórico">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.RemoverPedidoCommand}"
+                                                                          CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                  <Image Source="{StaticResource IconDeleteDanger}" WidthRequest="22" HeightRequest="22"
+                                                      HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
+                                            </Border>
+                                            <Border Grid.Column="1" WidthRequest="48" HeightRequest="48" Padding="0"
+                                                    HorizontalOptions="Center" VerticalOptions="Center"
+                                                    BackgroundColor="#5C82C8" StrokeThickness="0"
+                                                    AutomationProperties.Name="Editar pedido do histórico">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.EditPedidoCommand}"
+                                                                          CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                  <Image Source="{StaticResource IconEdit}" WidthRequest="22" HeightRequest="22"
+                                                      HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
+                                            </Border>
+                                        </Grid>
                                     </Grid>
-                                    <StackLayout Grid.Row="1" Spacing="5">
-                                        <Label Text="Itens:" Style="{StaticResource Title4}"
+                                    <StackLayout Grid.Row="1" Spacing="5" IsVisible="True">
+                                        <Label Text="Itens:" Style="{StaticResource Title4}" IsVisible="True"
                                                TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Bebidas}" Spacing="5">
+                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Bebidas}" Spacing="5" IsVisible="True">
                                             <BindableLayout.ItemTemplate>
                                                 <DataTemplate x:DataType="models:Bebida">
-                                                    <Label Text="{Binding Nome}"
+                                                    <Label Text="{Binding NomeComQuantidade}"
+                                                        IsVisible="True"
                                                         HorizontalOptions="StartAndExpand"
                                                         FontSize="14"
                                                         TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
@@ -57,7 +86,7 @@
                                             </BindableLayout.ItemTemplate>
                                         </VerticalStackLayout>
                                     </StackLayout>
-                                     <Label Grid.Row="2" Text="{Binding Total, StringFormat='Total: {}{0:C}'}" Style="{StaticResource Title3}"
+                                     <Label Grid.Row="2" Text="{Binding Total, Converter={StaticResource EuroCurrencyConverter}}" Style="{StaticResource Title3}" IsVisible="True"
                                          TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                 </Grid>
                             </Frame>

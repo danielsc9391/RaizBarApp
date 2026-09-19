@@ -12,9 +12,9 @@
     <Color x:Key="SecondaryDarkText">#9880e5</Color>
     <Color x:Key="Tertiary">#2B0B98</Color>
 
-    <Color x:Key="DarkBackground">#875940</Color>
+    <Color x:Key="DarkBackground">#6B3A2E</Color>
     <Color x:Key="LightOnDarkBackground">#C3C3C3</Color>
-    <Color x:Key="LightBackground">#FFE7CD</Color>
+    <Color x:Key="LightBackground">#FBE0C2</Color>
     <Color x:Key="DarkOnLightBackground">#0D0D0D</Color>
 
     <Color x:Key="LightSecondaryBackground">#E0E0E0</Color>
@@ -36,10 +36,10 @@
     <Color x:Key="Gray950">#141414</Color>
 
     <!-- Custom theme colors for light and dark themes -->
-    <Color x:Key="LightText">#875940</Color>
-    <Color x:Key="LightPrimary">#875940</Color>
-    <Color x:Key="DarkText">#FFE7CD</Color>
-    <Color x:Key="DarkPrimary">#FFE7CD</Color>
+    <Color x:Key="LightText">#A85D3F</Color>
+    <Color x:Key="LightPrimary">#A85D3F</Color>
+    <Color x:Key="DarkText">#FBC791</Color>
+    <Color x:Key="DarkPrimary">#FBC791</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>

@@ -71,9 +71,9 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                         <Grid Grid.Row="2" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" Margin="5,0">
-                            <Label Text="{Binding Total, StringFormat='Total: {}{0:C}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
+                            <Label Text="{Binding TotalFormatado, StringFormat='Total: {0}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
                         </Grid>
-                        <Button Grid.Row="3" Text="Limpar Pedido" Command="{Binding LimparPedidoCommand}" Style="{StaticResource ActionDangerButtonStyle}" Margin="10,0" />
+                        <Button Grid.Row="3" Text="Limpar Pedido" Command="{Binding LimparPedidoCommand}" Style="{StaticResource ActionDangerButtonStyle}" />
                         <Button Grid.Row="4" Text="Histórico de Pedidos" Command="{Binding VerHistoricoCommand}" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}" TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" Margin="10,0" />
                     </Grid>
                 </ScrollView>

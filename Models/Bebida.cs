@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace RaizBarApp.Models;
 
@@ -18,9 +19,13 @@ public class Bebida : INotifyPropertyChanged
             {
                 _nome = value ?? string.Empty;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(NomeComQuantidade));
             }
         }
     }
+
+    [JsonIgnore]
+    public string NomeComQuantidade => $"{Nome} x{Quantidade}";
 
     public decimal Preco
     {
@@ -44,6 +49,7 @@ public class Bebida : INotifyPropertyChanged
             {
                 _quantidade = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(NomeComQuantidade));
             }
         }
     }

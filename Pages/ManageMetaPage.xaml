@@ -70,12 +70,17 @@
                                 Color="{Binding Text, Source={x:Reference ColorEntry}, x:DataType=Entry}" Grid.Column="2"
                                 SemanticProperties.HeadingLevel="None" />
 
-                            <Button 
-                                ImageSource="{StaticResource IconDelete}"
-                                Background="Transparent"
-                                Command="{Binding DeleteCategoryCommand, Source={RelativeSource AncestorType={x:Type pageModels:ManageMetaPageModel}}, x:DataType=pageModels:ManageMetaPageModel}" CommandParameter="{Binding .}"
-                                Grid.Column="3"
-                                SemanticProperties.Description="{Binding Title, StringFormat='Delete {0} Category'}" />
+                            <Border Grid.Column="3" WidthRequest="48" HeightRequest="48" Padding="0"
+                                    HorizontalOptions="Center" VerticalOptions="Center"
+                                    BackgroundColor="Transparent" StrokeThickness="0"
+                                    SemanticProperties.Description="{Binding Title, StringFormat='Delete {0} Category'}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding DeleteCategoryCommand, Source={RelativeSource AncestorType={x:Type pageModels:ManageMetaPageModel}}, x:DataType=pageModels:ManageMetaPageModel}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Image Source="{StaticResource IconDelete}" WidthRequest="24" HeightRequest="24"
+                                       HorizontalOptions="Center" VerticalOptions="Center" Aspect="Center" />
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
@@ -86,9 +91,16 @@
                     SemanticProperties.Description="Save Categories"
                     MinimumHeightRequest="{OnIdiom 44,Desktop=60}" Grid.Column="0" />
 
-                <Button ImageSource="{StaticResource IconAdd}"
-                    Command="{Binding AddCategoryCommand}" Grid.Column="1"
-                    SemanticProperties.Description="Add Categories" />
+                <Border Grid.Column="1" WidthRequest="48" HeightRequest="48" Padding="0"
+                        HorizontalOptions="Center" VerticalOptions="Center"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        SemanticProperties.Description="Add Categories">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddCategoryCommand}" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{StaticResource IconAdd}" WidthRequest="24" HeightRequest="24"
+                           HorizontalOptions="Center" VerticalOptions="Center" Aspect="Center" />
+                </Border>
             </Grid>
 
             <Label Text="Tags" Style="{StaticResource Title2}" />
@@ -113,12 +125,17 @@
                                 Color="{Binding Text, Source={x:Reference ColorEntry}, x:DataType=Entry}" Grid.Column="2"
                                 SemanticProperties.HeadingLevel="None" />
         
-                            <Button 
-                                ImageSource="{StaticResource IconDelete}"
-                                SemanticProperties.Description="{Binding Title, StringFormat='Delete {0} Tag'}"
-                                Background="Transparent"
-                                Command="{Binding DeleteTagCommand, Source={RelativeSource AncestorType={x:Type pageModels:ManageMetaPageModel}}, x:DataType=pageModels:ManageMetaPageModel}" CommandParameter="{Binding .}"
-                                Grid.Column="3"/>
+                            <Border Grid.Column="3" WidthRequest="48" HeightRequest="48" Padding="0"
+                                    HorizontalOptions="Center" VerticalOptions="Center"
+                                    BackgroundColor="Transparent" StrokeThickness="0"
+                                    SemanticProperties.Description="{Binding Title, StringFormat='Delete {0} Tag'}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding DeleteTagCommand, Source={RelativeSource AncestorType={x:Type pageModels:ManageMetaPageModel}}, x:DataType=pageModels:ManageMetaPageModel}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Image Source="{StaticResource IconDelete}" WidthRequest="24" HeightRequest="24"
+                                       HorizontalOptions="Center" VerticalOptions="Center" Aspect="Center" />
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
@@ -129,9 +146,16 @@
                     SemanticProperties.Description="Save Tags"
                     MinimumHeightRequest="{OnIdiom 44,Desktop=60}" Grid.Column="0" />
 
-                <Button ImageSource="{StaticResource IconAdd}"
-                    Command="{Binding AddTagCommand}" Grid.Column="1"
-                    SemanticProperties.Description="Add Tags" />
+                <Border Grid.Column="1" WidthRequest="48" HeightRequest="48" Padding="0"
+                        HorizontalOptions="Center" VerticalOptions="Center"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        SemanticProperties.Description="Add Tags">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddTagCommand}" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{StaticResource IconAdd}" WidthRequest="24" HeightRequest="24"
+                           HorizontalOptions="Center" VerticalOptions="Center" Aspect="Center" />
+                </Border>
             </Grid>
         </VerticalStackLayout>
     </ScrollView>

@@ -9,6 +9,7 @@ namespace RaizBarApp.PageModels;
 public class HistoricoPedidosPageModel : INotifyPropertyChanged
 {
     private readonly HistoricoPedidosService _historicoPedidosService;
+    private readonly PedidoViewModel _pedidoViewModel;
 
     public ObservableCollection<PedidoHistorico> PedidosHistoricos
     {
@@ -17,12 +18,15 @@ public class HistoricoPedidosPageModel : INotifyPropertyChanged
 
     public ICommand VoltarCommand { get; }
     public ICommand RemoverPedidoCommand { get; }
+    public ICommand EditPedidoCommand { get; }
 
-    public HistoricoPedidosPageModel(HistoricoPedidosService historicoPedidosService)
+    public HistoricoPedidosPageModel(HistoricoPedidosService historicoPedidosService, PedidoViewModel pedidoViewModel)
     {
         _historicoPedidosService = historicoPedidosService;
+        _pedidoViewModel = pedidoViewModel;
         VoltarCommand = new Command(async () => await VoltarAsync());
         RemoverPedidoCommand = new Command<PedidoHistorico>(async pedido => await RemoverPedidoAsync(pedido));
+        EditPedidoCommand = new Command<PedidoHistorico>(async pedido => await EditPedidoAsync(pedido));
     }
 
     public Task CarregarAsync()
@@ -32,7 +36,7 @@ public class HistoricoPedidosPageModel : INotifyPropertyChanged
 
     private async Task VoltarAsync()
     {
-        await Application.Current.MainPage.Navigation.PopAsync();
+        await Shell.Current.Navigation.PopAsync();
     }
 
     private async Task RemoverPedidoAsync(PedidoHistorico? pedido)
@@ -52,6 +56,20 @@ public class HistoricoPedidosPageModel : INotifyPropertyChanged
         {
             await _historicoPedidosService.RemoveAsync(pedido);
         }
+    }
+
+    private async Task EditPedidoAsync(PedidoHistorico? pedido)
+    {
+        if (pedido is null)
+        {
+            return;
+        }
+
+        // Carregar o pedido no ViewModel para edição
+        _pedidoViewModel.CarregarPedidoParaEdicao(pedido);
+        
+        // Navegar para a página de pedido
+        await Shell.Current.Navigation.PushAsync(new Pages.PedidoPage(_pedidoViewModel));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

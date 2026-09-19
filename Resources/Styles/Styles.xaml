@@ -372,9 +372,10 @@
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="5"/>
         <Setter Property="Padding" Value="14,10"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="HeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -428,9 +429,8 @@
         <Setter Property="WaveColor" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
     </Style>
 
-    <!-- Explicit button styles for specific actions -->
-    <Style x:Key="ActionDangerButtonStyle" TargetType="Button">
-        <Setter Property="BackgroundColor" Value="#C85C5C" />
+    <!-- Base style for action buttons -->
+    <Style x:Key="ActionButtonBaseStyle" TargetType="Button">
         <Setter Property="TextColor" Value="White" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="18"/>
@@ -439,18 +439,17 @@
         <Setter Property="Padding" Value="14,10"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
+        <Setter Property="HeightRequest" Value="44"/>
+        <Setter Property="Margin" Value="10,0"/>
     </Style>
 
-    <Style x:Key="ActionConfirmButtonStyle" TargetType="Button">
+    <!-- Explicit button styles for specific actions -->
+    <Style x:Key="ActionDangerButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonBaseStyle}">
+        <Setter Property="BackgroundColor" Value="#C85C5C" />
+    </Style>
+
+    <Style x:Key="ActionConfirmButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonBaseStyle}">
         <Setter Property="BackgroundColor" Value="#4F9D69" />
-        <Setter Property="TextColor" Value="White" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="18"/>
-        <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="5"/>
-        <Setter Property="Padding" Value="14,10"/>
-        <Setter Property="MinimumHeightRequest" Value="44"/>
-        <Setter Property="MinimumWidthRequest" Value="44"/>
     </Style>
 
 </ResourceDictionary>

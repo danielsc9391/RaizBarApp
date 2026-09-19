@@ -26,23 +26,14 @@
     </ContentPage.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
-        <shared:AppHeader Grid.Row="0" />
-        <ScrollView Grid.Row="1">
-                <Grid Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Label Grid.Row="0" Text="Pedido de Bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1"/>
-                    <CollectionView Grid.Row="1" ItemsSource="{Binding Bebidas}"
-                                Margin="-7.5,0"
-                                MinimumHeightRequest="250"
-                                x:Name="BebidasCollectionView"
-                                SelectionMode="None">
+        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" />
+        <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}" RowDefinitions="*,Auto">
+            <CollectionView Grid.Row="0" ItemsSource="{Binding Bebidas}"
+                            x:Name="BebidasCollectionView"
+                            SelectionMode="None">
+                <CollectionView.Header>
+                    <Label Text="Pedido de Bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1" />
+                </CollectionView.Header>
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
                         </CollectionView.ItemsLayout>
@@ -52,23 +43,24 @@
                                     <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
                                         <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                         <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                                        <Button Grid.Column="2" Text="-" WidthRequest="40" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:PedidoViewModel}}, Path=RemoverQuantidadeCommand}" CommandParameter="{Binding .}" />
+                                        <Button Grid.Column="2" Text="-" WidthRequest="40" HeightRequest="40" Command="{Binding Source={x:Reference OverviewPage}, Path=BindingContext.RemoverQuantidadeCommand}" CommandParameter="{Binding .}" />
                                         <StackLayout Grid.Column="3" Orientation="Horizontal" Spacing="5">
                                             <Label Text="{Binding Quantidade}" VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="30" HorizontalTextAlignment="Center" />
-                                            <Button Text="+" WidthRequest="40" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:PedidoViewModel}}, Path=AdicionarQuantidadeCommand}" CommandParameter="{Binding .}" />
+                                            <Button Text="+" WidthRequest="40" HeightRequest="40" Command="{Binding Source={x:Reference OverviewPage}, Path=BindingContext.AdicionarQuantidadeCommand}" CommandParameter="{Binding .}" />
                                         </StackLayout>
                                     </Grid>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
-                    </CollectionView>
-                    <Grid Grid.Row="2" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" Margin="5,0">
-                        <Label Text="{Binding Total, StringFormat='Total: {}{0:C}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
-                    </Grid>
-                    <Button Grid.Row="3" Text="Fechar Pedido" ImageSource="checkmark.svg" Command="{Binding FecharPedidoCommand}" Style="{StaticResource ActionConfirmButtonStyle}" Margin="10,0" />
-                    <Button Grid.Row="4" Text="Limpar Pedido" ImageSource="delete.svg" Command="{Binding LimparPedidoCommand}" Style="{StaticResource ActionDangerButtonStyle}" Margin="10,0" />
+            </CollectionView>
+            <VerticalStackLayout Grid.Row="1" Spacing="{StaticResource LayoutSpacing}">
+                <Grid Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}">
+                    <Label Text="{Binding TotalFormatado, StringFormat='Total: {0}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
                 </Grid>
-        </ScrollView>
+                <Button Text="Fechar Pedido" ImageSource="checkmark.svg" Command="{Binding FecharPedidoCommand}" Style="{StaticResource ActionConfirmButtonStyle}" />
+                <Button Text="Limpar Pedido" ImageSource="delete.svg" Command="{Binding LimparPedidoCommand}" Style="{StaticResource ActionDangerButtonStyle}" />
+            </VerticalStackLayout>
+        </Grid>
 
     </Grid>
 </ContentPage>

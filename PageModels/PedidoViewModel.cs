@@ -1,6 +1,7 @@
 using RaizBarApp.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -11,6 +12,8 @@ public class PedidoViewModel : INotifyPropertyChanged
     private readonly BebidasService _bebidasService;
     private readonly HistoricoPedidosService _historicoPedidosService;
     private decimal _total;
+    private bool _isEditing = false;
+    private PedidoHistorico? _pedidoEditando = null;
 
     public ObservableCollection<Bebida> Bebidas
     {
@@ -29,6 +32,8 @@ public class PedidoViewModel : INotifyPropertyChanged
             }
         }
     }
+
+    public string TotalFormatado => Total.ToString("C", new CultureInfo("pt-PT"));
 
     public ICommand AdicionarQuantidadeCommand { get; }
     public ICommand RemoverQuantidadeCommand { get; }
@@ -93,24 +98,71 @@ public class PedidoViewModel : INotifyPropertyChanged
         Total = Bebidas.Sum(b => b.Subtotal);
     }
 
+    public void CarregarPedidoParaEdicao(PedidoHistorico pedido)
+    {
+        // Marcar que estamos em modo de edição
+        _isEditing = true;
+        _pedidoEditando = pedido;
+
+        // Limpar o pedido atual
+        LimparPedido();
+
+        // Carregar as quantidades do pedido histórico
+        foreach (var bebidaHistorica in pedido.Bebidas)
+        {
+            var bebidaAtual = Bebidas.FirstOrDefault(b => b.Nome == bebidaHistorica.Nome);
+            if (bebidaAtual != null)
+            {
+                // Se a bebida existir no catálogo atual, preencher a quantidade
+                bebidaAtual.Quantidade = bebidaHistorica.Quantidade;
+            }
+            // Se a bebida não existir no catálogo atual, ignoramos (comportamento razoável)
+        }
+        CalcularTotal();
+    }
+
     private async Task FecharPedidoAsync()
     {
         if (Total > 0)
         {
-            // Create order history entry
-            var pedidoHistorico = new PedidoHistorico
+            if (_isEditing && _pedidoEditando != null)
             {
-                DataHora = DateTime.Now,
-                Bebidas = Bebidas.Where(b => b.Quantidade > 0).Select(b => new Bebida
+                // Atualizar o pedido existente no histórico
+                var pedidoParaAtualizar = _pedidoEditando;
+                pedidoParaAtualizar.Bebidas.Clear();
+                foreach (var bebida in Bebidas.Where(b => b.Quantidade > 0))
                 {
-                    Nome = b.Nome,
-                    Preco = b.Preco,
-                    Quantidade = b.Quantidade
-                }).ToList(),
-                Total = Total
-            };
+                    pedidoParaAtualizar.Bebidas.Add(new Bebida
+                    {
+                        Nome = bebida.Nome,
+                        Preco = bebida.Preco,
+                        Quantidade = bebida.Quantidade
+                    });
+                }
+                pedidoParaAtualizar.Total = Total;
+                // Atualiza a data para a hora atual (ou mantém a original se preferir)
+                // Aqui estou usando a data atual como padrão, mas poderia ser opcional
+                pedidoParaAtualizar.DataHora = DateTime.Now;
 
-            await _historicoPedidosService.AddAsync(pedidoHistorico);
+                await _historicoPedidosService.SaveAsync(); // Este método já existe e salva todos os pedidos
+            }
+            else
+            {
+                // Criar novo pedido no histórico (comportamento original)
+                var pedidoHistorico = new PedidoHistorico
+                {
+                    DataHora = DateTime.Now,
+                    Bebidas = Bebidas.Where(b => b.Quantidade > 0).Select(b => new Bebida
+                    {
+                        Nome = b.Nome,
+                        Preco = b.Preco,
+                        Quantidade = b.Quantidade
+                    }).ToList(),
+                    Total = Total
+                };
+
+                await _historicoPedidosService.AddAsync(pedidoHistorico);
+            }
 
             // Clear current order
             LimparPedido();
@@ -119,7 +171,7 @@ public class PedidoViewModel : INotifyPropertyChanged
 
     private async Task VerHistoricoAsync()
     {
-        await Application.Current.MainPage.Navigation.PushAsync(new Pages.HistoricoPedidosPage());
+        await Shell.Current.Navigation.PushAsync(new Pages.HistoricoPedidosPage());
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
