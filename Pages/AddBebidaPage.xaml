@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RaizBarApp.Pages.AddBebidaPage"
+             Title="Adicionar Bebida">
+    <ContentPage.Content>
+        <Grid Padding="20" RowSpacing="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Row="0" Text="Adicionar Nova Bebida" Style="{StaticResource Title2}" />
+            
+            <Entry Grid.Row="1" x:Name="NomeEntry" Placeholder="Nome da bebida" Text="{Binding NovaBebidaNome}" />
+            
+            <Entry Grid.Row="2" x:Name="PrecoEntry" Placeholder="Preço (€)" Keyboard="Numeric" Text="{Binding NovaBebidaPreco}" TextChanged="OnPrecoEntryTextChanged" />
+            
+            <Button Grid.Row="3" Text="Adicionar" Clicked="OnAddBebidaClicked" BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

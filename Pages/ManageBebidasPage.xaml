@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pageModels="clr-namespace:RaizBarApp.PageModels"
+             xmlns:models="clr-namespace:RaizBarApp.Models"
+             xmlns:shared="clr-namespace:RaizBarApp.Views.Shared"
+             x:Class="RaizBarApp.Pages.ManageBebidasPage"
+             x:DataType="pageModels:ManageBebidasPageModel"
+             Title="Gerir Bebidas">
+
+    <Grid RowDefinitions="Auto,*">
+        <shared:AppHeader Grid.Row="0" />
+        <ContentPage.Content>
+            <Grid Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Text="Lista de Bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1"/>
+
+                <CollectionView Grid.Row="1" ItemsSource="{Binding Bebidas}"
+                            Margin="-7.5,0"
+                            MinimumHeightRequest="250"
+                            x:Name="BebidasCollectionView"
+                            SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Bebida">
+                            <Frame Padding="10" Margin="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                                    <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" />
+                                    <StackLayout Grid.Column="2" Orientation="Horizontal" Spacing="5">
+                                        <Button Text="Editar" WidthRequest="60" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:ManageBebidasPageModel}}, Path=EditBebidaCommand}" CommandParameter="{Binding .}" />
+                                        <Button Text="Remover" WidthRequest="80" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:ManageBebidasPageModel}}, Path=RemoveBebidaCommand}" CommandParameter="{Binding .}" BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Grid.Row="2" Text="Adicionar Bebida" Command="{Binding AddBebidaCommand}" BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" TextColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" Margin="10,0" />
+            </Grid>
+        </ContentPage.Content>
+    </Grid>
+</ContentPage>
