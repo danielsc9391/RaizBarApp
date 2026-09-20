@@ -2,13 +2,31 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RaizBarApp.Views.Shared.AppHeader"
+             x:Name="Root"
              HeightRequest="80">
-  <Grid>
-    <Image Source="logo.png"
+  <Grid ColumnDefinitions="64,*,64">
+    <Button Grid.Column="0"
+            Text="☰"
+            FontSize="28"
+            TextColor="{AppThemeBinding Light={StaticResource LightText}, Dark={StaticResource DarkText}}"
+            BackgroundColor="Transparent"
+            BorderWidth="0"
+            Padding="0"
+            Margin="20,0,0,0"
+            HorizontalOptions="Start"
+            VerticalOptions="Center"
+            SemanticProperties.Description="Abrir menu de navegação"
+            IsVisible="{Binding Source={x:Reference Root}, Path=ShowHamburger}"
+            Clicked="OnMenuButtonClicked" />
+
+    <Image Grid.Column="1"
+           Source="logo.png"
            HeightRequest="72"
            WidthRequest="72"
            Aspect="AspectFit"
            HorizontalOptions="Center"
            VerticalOptions="Center" />
+
+     <BoxView Grid.Column="2" WidthRequest="64" IsVisible="False" />
   </Grid>
 </ContentView>

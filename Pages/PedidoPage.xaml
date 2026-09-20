@@ -26,17 +26,28 @@
     </ContentPage.Behaviors>
 
     <Grid RowDefinitions="Auto,*">
-        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" />
-        <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}" RowDefinitions="*,Auto">
-            <CollectionView Grid.Row="0" ItemsSource="{Binding Bebidas}"
+        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" ShowHamburger="True" />
+        <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}" RowDefinitions="Auto,*,Auto">
+            <Label Grid.Row="0" Text="Pedido de Bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1" />
+            <CollectionView Grid.Row="1" ItemsSource="{Binding BebidasAgrupadas}" IsGrouped="True"
                             x:Name="BebidasCollectionView"
                             SelectionMode="None">
-                <CollectionView.Header>
-                    <Label Text="Pedido de Bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1" />
-                </CollectionView.Header>
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
                         </CollectionView.ItemsLayout>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12">
+                        <Label Text="Ainda não tens bebidas registadas. Vai a 'Gerir Bebidas' para adicionar." HorizontalTextAlignment="Center" />
+                        <Button Text="Gerir Bebidas" Command="{Binding AbrirGestaoBebidasCommand}" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Border Padding="8,5" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+                            <Label Text="{Binding Nome}" Style="{StaticResource Title4}" />
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Bebida">
                                 <Frame Padding="10" Margin="5" CornerRadius="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
@@ -53,7 +64,7 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
             </CollectionView>
-            <VerticalStackLayout Grid.Row="1" Spacing="{StaticResource LayoutSpacing}">
+            <VerticalStackLayout Grid.Row="2" Spacing="{StaticResource LayoutSpacing}">
                 <Grid Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}">
                     <Label Text="{Binding TotalFormatado, StringFormat='Total: {0}'}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource Title3}" TextColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
                 </Grid>

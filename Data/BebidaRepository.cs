@@ -54,7 +54,26 @@ namespace RaizBarApp.Data
             {
                 _bebidas = bebidas ?? new List<Bebida>();
                 var json = System.Text.Json.JsonSerializer.Serialize(_bebidas, JsonContext.Default.ListBebida);
-                await File.WriteAllTextAsync(_filePath, json);
+                var temporaryPath = _filePath + ".tmp";
+                try
+                {
+                    await using (var stream = new FileStream(temporaryPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
+                    await using (var writer = new StreamWriter(stream))
+                    {
+                        await writer.WriteAsync(json);
+                        await writer.FlushAsync();
+                        await stream.FlushAsync();
+                    }
+
+                    File.Move(temporaryPath, _filePath, overwrite: true);
+                }
+                finally
+                {
+                    if (File.Exists(temporaryPath))
+                    {
+                        File.Delete(temporaryPath);
+                    }
+                }
             }
             catch (Exception ex)
             {

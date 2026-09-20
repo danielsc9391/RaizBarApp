@@ -11,7 +11,7 @@
     Title="RaizBarApp">
 
     <Shell.FlyoutHeader>
-        <shared:AppHeader HeightRequest="60" />
+        <shared:AppHeader HeightRequest="60" ShowHamburger="False" />
     </Shell.FlyoutHeader>
 
     <ShellContent

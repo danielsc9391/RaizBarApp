@@ -62,9 +62,9 @@
                                         <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
                                             <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                             <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                                            <Button Grid.Column="2" Text="-" WidthRequest="40" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:PedidoViewModel}}, Path=RemoverQuantidadeCommand}" CommandParameter="{Binding .}" />
+                                            <Button Grid.Column="2" Text="-" WidthRequest="40" HeightRequest="40" Command="{Binding Source={x:Reference OverviewPage}, Path=BindingContext.RemoverQuantidadeCommand}" CommandParameter="{Binding .}" />
                                             <Label Grid.Column="3" Text="{Binding Quantidade}" VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="40" />
-                                            <Button Grid.Column="4" Text="+" WidthRequest="40" HeightRequest="40" Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:PedidoViewModel}}, Path=AdicionarQuantidadeCommand}" CommandParameter="{Binding .}" />
+                                            <Button Grid.Column="4" Text="+" WidthRequest="40" HeightRequest="40" Command="{Binding Source={x:Reference OverviewPage}, Path=BindingContext.AdicionarQuantidadeCommand}" CommandParameter="{Binding .}" />
                                         </Grid>
                                     </Frame>
                                 </DataTemplate>

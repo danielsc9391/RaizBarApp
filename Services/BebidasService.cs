@@ -1,5 +1,7 @@
 using RaizBarApp.Models;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Text;
 
 namespace RaizBarApp.Services;
 
@@ -9,6 +11,7 @@ public sealed class BebidasService
     private readonly Task _initializationTask;
 
     public ObservableCollection<Bebida> Bebidas { get; } = new();
+    private IReadOnlyList<MigracaoCategoriaBebida> _migracoesCategorias = Array.Empty<MigracaoCategoriaBebida>();
 
     public BebidasService(BebidaRepository bebidaRepository)
     {
@@ -21,7 +24,15 @@ public sealed class BebidasService
         ArgumentNullException.ThrowIfNull(bebida);
         await _initializationTask;
         Bebidas.Add(bebida);
-        await SaveAsync();
+        try
+        {
+            await SaveAsync();
+        }
+        catch
+        {
+            Bebidas.Remove(bebida);
+            throw;
+        }
     }
 
     public async Task UpdateAsync(Bebida bebida)
@@ -35,13 +46,37 @@ public sealed class BebidasService
     {
         ArgumentNullException.ThrowIfNull(bebida);
         await _initializationTask;
+        var index = Bebidas.IndexOf(bebida);
         Bebidas.Remove(bebida);
-        await SaveAsync();
+        try
+        {
+            await SaveAsync();
+        }
+        catch
+        {
+            Bebidas.Insert(index < 0 ? Bebidas.Count : index, bebida);
+            throw;
+        }
+    }
+
+    public async Task<IReadOnlyList<MigracaoCategoriaBebida>> ConsumirMigracoesCategoriasAsync()
+    {
+        await _initializationTask;
+        var migracoes = _migracoesCategorias;
+        _migracoesCategorias = Array.Empty<MigracaoCategoriaBebida>();
+        return migracoes;
     }
 
     private async Task LoadBebidasAsync()
     {
         var bebidas = await _bebidaRepository.LoadBebidasAsync();
+        var migracoes = NormalizarCategorias(bebidas);
+        if (migracoes.Count > 0)
+        {
+            await _bebidaRepository.SaveBebidasAsync(bebidas);
+        }
+
+        _migracoesCategorias = migracoes;
         await MainThread.InvokeOnMainThreadAsync(() =>
         {
             foreach (var bebida in bebidas)
@@ -49,6 +84,83 @@ public sealed class BebidasService
                 Bebidas.Add(bebida);
             }
         });
+    }
+
+    private static List<MigracaoCategoriaBebida> NormalizarCategorias(List<Bebida> bebidas)
+    {
+        var migracoes = new List<MigracaoCategoriaBebida>();
+
+        foreach (var bebida in bebidas)
+        {
+            var categoriaAnterior = bebida.Categoria?.Trim() ?? string.Empty;
+            var categoriaNova = EncontrarCategoria(categoriaAnterior);
+            if (categoriaAnterior == categoriaNova)
+            {
+                continue;
+            }
+
+            bebida.Categoria = categoriaNova;
+            migracoes.Add(new MigracaoCategoriaBebida(bebida.Nome, categoriaAnterior, categoriaNova));
+        }
+
+        return migracoes;
+    }
+
+    private static string EncontrarCategoria(string categoria)
+    {
+        var normalizada = NormalizarTexto(categoria);
+        if (normalizada.Length == 0)
+        {
+            return "Outros";
+        }
+
+        var correspondencia = CategoriasBebidas.Todas
+            .Select(opcao => new
+            {
+                Opcao = opcao,
+                Distancia = DistanciaLevenshtein(normalizada, NormalizarTexto(opcao))
+            })
+            .OrderBy(item => item.Distancia)
+            .ToList();
+
+        var melhor = correspondencia[0];
+        var semelhanca = 1d - (double)melhor.Distancia / Math.Max(normalizada.Length, NormalizarTexto(melhor.Opcao).Length);
+        return semelhanca >= 0.8d ? melhor.Opcao : "Outros";
+    }
+
+    private static string NormalizarTexto(string texto)
+    {
+        var decomposed = texto.Normalize(NormalizationForm.FormD);
+        var builder = new StringBuilder();
+        foreach (var character in decomposed)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
+            {
+                builder.Append(char.ToLowerInvariant(character));
+            }
+        }
+
+        return builder.ToString();
+    }
+
+    private static int DistanciaLevenshtein(string esquerda, string direita)
+    {
+        var distances = new int[esquerda.Length + 1, direita.Length + 1];
+        for (var i = 0; i <= esquerda.Length; i++) distances[i, 0] = i;
+        for (var j = 0; j <= direita.Length; j++) distances[0, j] = j;
+
+        for (var i = 1; i <= esquerda.Length; i++)
+        {
+            for (var j = 1; j <= direita.Length; j++)
+            {
+                var custo = esquerda[i - 1] == direita[j - 1] ? 0 : 1;
+                distances[i, j] = Math.Min(
+                    Math.Min(distances[i - 1, j] + 1, distances[i, j - 1] + 1),
+                    distances[i - 1, j - 1] + custo);
+            }
+        }
+
+        return distances[esquerda.Length, direita.Length];
     }
 
     private Task SaveAsync()

@@ -65,10 +65,18 @@ public class HistoricoPedidosPageModel : INotifyPropertyChanged
             return;
         }
 
-        // Carregar o pedido no ViewModel para edição
+        var confirmou = await Shell.Current.DisplayAlertAsync(
+            "Editar este pedido?",
+            $"Vais editar o pedido de {pedido.DataHora:dd/MM/yyyy HH:mm}. As quantidades atuais em 'Pedido de Bebidas' serão substituídas pelas deste pedido guardado. Continuar?",
+            "Editar",
+            "Cancelar");
+
+        if (!confirmou)
+        {
+            return;
+        }
+
         _pedidoViewModel.CarregarPedidoParaEdicao(pedido);
-        
-        // Navegar para a página de pedido
         await Shell.Current.Navigation.PushAsync(new Pages.PedidoPage(_pedidoViewModel));
     }
 

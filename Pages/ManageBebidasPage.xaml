@@ -9,7 +9,7 @@
              x:DataType="pageModels:ManageBebidasPageModel">
 
     <Grid RowDefinitions="Auto,*">
-        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" />
+        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" ShowHamburger="True" />
         <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -21,7 +21,13 @@
                     <VerticalStackLayout Spacing="10">
                         <Label Text="Gerir bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                         <Entry Placeholder="Nome da bebida" Text="{Binding NovaBebidaNome}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                        <Entry Placeholder="Preço (€)" Keyboard="Numeric" Text="{Binding NovaBebidaPreco}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        <Label Text="{Binding ErroNome}" TextColor="#C85C5C" IsVisible="{Binding TemErroNome}" />
+                         <Picker Title="Categoria" ItemsSource="{Binding CategoriasDisponiveis}" SelectedItem="{Binding NovaBebidaCategoria}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        <HorizontalStackLayout Spacing="10">
+                            <Entry x:Name="PrecoEntry" Placeholder="Preço (€)" Keyboard="Numeric" Text="{Binding NovaBebidaPreco}" TextChanged="PrecoEntry_TextChanged" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            <Label Text="€" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding ErroPreco}" TextColor="#C85C5C" IsVisible="{Binding TemErroPreco}" />
                         <HorizontalStackLayout Spacing="10">
                             <Button Text="{Binding TextoFormulario}" Command="{Binding AddBebidaCommand}" Style="{StaticResource ActionConfirmButtonStyle}" HorizontalOptions="FillAndExpand" />
                             <Button Text="Cancelar" Command="{Binding CancelarEdicaoCommand}" IsVisible="{Binding EstaAEditar}" Style="{StaticResource ActionDangerButtonStyle}" />
@@ -44,11 +50,17 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Bebida">
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="🗑 Eliminar" BackgroundColor="#C85C5C" Command="{Binding Source={x:Reference ManageBebidasRoot}, Path=BindingContext.RemoveBebidaCommand}" CommandParameter="{Binding .}" />
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
                             <Frame Padding="12" Margin="5" CornerRadius="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
                                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                                     <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                     <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                                    <HorizontalStackLayout Grid.Column="2" Spacing="5" VerticalOptions="Center">
+                                    <HorizontalStackLayout Grid.Column="2" Spacing="8" VerticalOptions="Center">
                                         <Border WidthRequest="48" HeightRequest="48" Padding="0"
                                                 HorizontalOptions="Center" VerticalOptions="Center"
                                                 BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
@@ -65,16 +77,20 @@
                                                 HorizontalOptions="Center" VerticalOptions="Center"
                                                 BackgroundColor="#C85C5C" StrokeThickness="0"
                                                 AutomationProperties.Name="Eliminar bebida">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="24" />
+                                            </Border.StrokeShape>
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding Source={x:Reference ManageBebidasRoot}, Path=BindingContext.RemoveBebidaCommand}"
                                                                       CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
-                                              <Image Source="{StaticResource IconDeleteDanger}" WidthRequest="22" HeightRequest="22"
-                                                  HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
+                                            <Image Source="{StaticResource IconDeleteDanger}" WidthRequest="24" HeightRequest="24"
+                                                   HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
                                         </Border>
                                     </HorizontalStackLayout>
                                 </Grid>
                             </Frame>
+                            </SwipeView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

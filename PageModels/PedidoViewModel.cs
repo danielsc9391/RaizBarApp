@@ -12,13 +12,15 @@ public class PedidoViewModel : INotifyPropertyChanged
     private readonly BebidasService _bebidasService;
     private readonly HistoricoPedidosService _historicoPedidosService;
     private decimal _total;
-    private bool _isEditing = false;
+    private bool _isEditingExistingOrder;
     private PedidoHistorico? _pedidoEditando = null;
 
     public ObservableCollection<Bebida> Bebidas
     {
         get => _bebidasService.Bebidas;
     }
+
+    public ObservableCollection<CategoriaBebidasGroup> BebidasAgrupadas { get; } = new();
 
     public decimal Total
     {
@@ -29,27 +31,112 @@ public class PedidoViewModel : INotifyPropertyChanged
             {
                 _total = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TotalFormatado));
             }
         }
     }
 
     public string TotalFormatado => Total.ToString("C", new CultureInfo("pt-PT"));
 
+    public bool IsEditingExistingOrder
+    {
+        get => _isEditingExistingOrder;
+        private set
+        {
+            if (_isEditingExistingOrder != value)
+            {
+                _isEditingExistingOrder = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public ICommand AdicionarQuantidadeCommand { get; }
     public ICommand RemoverQuantidadeCommand { get; }
     public ICommand LimparPedidoCommand { get; }
     public ICommand FecharPedidoCommand { get; }
     public ICommand VerHistoricoCommand { get; }
+    public ICommand AbrirGestaoBebidasCommand { get; }
 
     public PedidoViewModel(BebidasService bebidasService, HistoricoPedidosService historicoPedidosService)
     {
         _bebidasService = bebidasService;
         _historicoPedidosService = historicoPedidosService;
-        AdicionarQuantidadeCommand = new Command<Bebida>(AdicionarQuantidade);
-        RemoverQuantidadeCommand = new Command<Bebida>(RemoverQuantidade);
+        AdicionarQuantidadeCommand = new Command<object>(obj =>
+        {
+            if (obj is Bebida bebida)
+                AdicionarQuantidade(bebida);
+        });
+        RemoverQuantidadeCommand = new Command<object>(obj =>
+        {
+            if (obj is Bebida bebida)
+                RemoverQuantidade(bebida);
+        });
         LimparPedidoCommand = new Command(async () => await LimparPedidoAsync());
         FecharPedidoCommand = new Command(async () => await FecharPedidoAsync());
         VerHistoricoCommand = new Command(async () => await VerHistoricoAsync());
+        AbrirGestaoBebidasCommand = new Command(async () => await AbrirGestaoBebidasAsync());
+
+        // Adicionar handler para observar mudanças nas bebidas
+        Bebidas.CollectionChanged += (sender, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Bebida bebida in e.NewItems)
+                {
+                    bebida.PropertyChanged += BebidaPropertyChanged;
+                }
+            }
+            if (e.OldItems != null)
+            {
+                foreach (Bebida bebida in e.OldItems)
+                {
+                    bebida.PropertyChanged -= BebidaPropertyChanged;
+                }
+            }
+            AtualizarAgrupamento();
+        };
+
+        // Subscrever eventos de propriedades para bebidas já existentes
+        foreach (var bebida in Bebidas)
+        {
+            bebida.PropertyChanged += BebidaPropertyChanged;
+        }
+        AtualizarAgrupamento();
+    }
+
+    private void BebidaPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // Se a mudança for na quantidade ou preço, recalcular o total
+        if (e.PropertyName == nameof(Bebida.Quantidade) || e.PropertyName == nameof(Bebida.Preco))
+        {
+            CalcularTotal();
+        }
+        else if (e.PropertyName == nameof(Bebida.Categoria))
+        {
+            AtualizarAgrupamento();
+        }
+    }
+
+    private void AtualizarAgrupamento()
+    {
+        var grupos = Bebidas
+            .GroupBy(b => CategoriasBebidas.Todas.FirstOrDefault(categoria =>
+                string.Equals(categoria, b.Categoria?.Trim(), StringComparison.OrdinalIgnoreCase)) ?? "Outros")
+            .OrderBy(g => g.Key)
+            .Select(g => new CategoriaBebidasGroup(g.Key, g.OrderBy(b => b.Nome)))
+            .ToList();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            BebidasAgrupadas.Clear();
+            foreach (var grupo in grupos) BebidasAgrupadas.Add(grupo);
+        });
+    }
+
+    private async Task AbrirGestaoBebidasAsync()
+    {
+        await Shell.Current.GoToAsync("//manage-bebidas");
     }
 
     private void AdicionarQuantidade(Bebida bebida)
@@ -100,8 +187,7 @@ public class PedidoViewModel : INotifyPropertyChanged
 
     public void CarregarPedidoParaEdicao(PedidoHistorico pedido)
     {
-        // Marcar que estamos em modo de edição
-        _isEditing = true;
+        IsEditingExistingOrder = true;
         _pedidoEditando = pedido;
 
         // Limpar o pedido atual
@@ -125,7 +211,18 @@ public class PedidoViewModel : INotifyPropertyChanged
     {
         if (Total > 0)
         {
-            if (_isEditing && _pedidoEditando != null)
+            var confirmou = await Shell.Current.DisplayAlertAsync(
+                "Fechar este pedido?",
+                $"Confirmas o fecho deste pedido com o total de {TotalFormatado}?",
+                "Fechar",
+                "Cancelar");
+
+            if (!confirmou)
+            {
+                return;
+            }
+
+            if (IsEditingExistingOrder && _pedidoEditando != null)
             {
                 // Atualizar o pedido existente no histórico
                 var pedidoParaAtualizar = _pedidoEditando;
@@ -144,7 +241,11 @@ public class PedidoViewModel : INotifyPropertyChanged
                 // Aqui estou usando a data atual como padrão, mas poderia ser opcional
                 pedidoParaAtualizar.DataHora = DateTime.Now;
 
-                await _historicoPedidosService.SaveAsync(); // Este método já existe e salva todos os pedidos
+                await _historicoPedidosService.SaveAsync();
+                LimparPedido();
+                IsEditingExistingOrder = false;
+                _pedidoEditando = null;
+                await Shell.Current.GoToAsync("//historico-pedidos");
             }
             else
             {
@@ -162,10 +263,9 @@ public class PedidoViewModel : INotifyPropertyChanged
                 };
 
                 await _historicoPedidosService.AddAsync(pedidoHistorico);
-            }
 
-            // Clear current order
-            LimparPedido();
+                LimparPedido();
+            }
         }
     }
 

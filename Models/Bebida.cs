@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace RaizBarApp.Models;
@@ -7,6 +6,7 @@ namespace RaizBarApp.Models;
 public class Bebida : INotifyPropertyChanged
 {
     private string _nome = string.Empty;
+    private string _categoria = string.Empty;
     private decimal _preco;
     private int _quantidade;
 
@@ -20,6 +20,19 @@ public class Bebida : INotifyPropertyChanged
                 _nome = value ?? string.Empty;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(NomeComQuantidade));
+            }
+        }
+    }
+
+    public string Categoria
+    {
+        get => _categoria;
+        set
+        {
+            if (_categoria != value)
+            {
+                _categoria = value ?? string.Empty;
+                OnPropertyChanged();
             }
         }
     }
@@ -54,11 +67,13 @@ public class Bebida : INotifyPropertyChanged
         }
     }
 
+    [JsonIgnore]
     public decimal Subtotal => Preco * Quantidade;
 
     public Bebida()
     {
         _nome = string.Empty;
+        _categoria = string.Empty;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

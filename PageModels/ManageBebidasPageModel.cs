@@ -12,12 +12,28 @@ namespace RaizBarApp.PageModels
         private readonly BebidasService _bebidasService;
         private string _novaBebidaNome = string.Empty;
         private string _novaBebidaPreco = string.Empty;
+        private string _novaBebidaCategoria = CategoriasBebidas.Todas[0];
+        private string _erroNome = string.Empty;
+        private string _erroPreco = string.Empty;
         private Bebida? _bebidaEmEdicao;
 
         public ObservableCollection<Bebida> Bebidas
         {
             get => _bebidasService.Bebidas;
         }
+
+        public IReadOnlyList<string> CategoriasDisponiveis => CategoriasBebidas.Todas;
+
+        public string NovaBebidaCategoria
+        {
+            get => _novaBebidaCategoria;
+            set { if (_novaBebidaCategoria != value) { _novaBebidaCategoria = value; OnPropertyChanged(); } }
+        }
+
+        public string ErroNome { get => _erroNome; private set { if (_erroNome != value) { _erroNome = value; OnPropertyChanged(); OnPropertyChanged(nameof(TemErroNome)); } } }
+        public string ErroPreco { get => _erroPreco; private set { if (_erroPreco != value) { _erroPreco = value; OnPropertyChanged(); OnPropertyChanged(nameof(TemErroPreco)); } } }
+        public bool TemErroNome => !string.IsNullOrEmpty(ErroNome);
+        public bool TemErroPreco => !string.IsNullOrEmpty(ErroPreco);
 
         public string NovaBebidaNome
         {
@@ -73,36 +89,52 @@ namespace RaizBarApp.PageModels
             _bebidaEmEdicao = bebida;
             NovaBebidaNome = bebida.Nome;
             NovaBebidaPreco = bebida.Preco.ToString("0.00", CultureInfo.GetCultureInfo("pt-PT"));
+            NovaBebidaCategoria = CategoriasBebidas.Todas.Contains(bebida.Categoria)
+                ? bebida.Categoria
+                : "Outros";
             OnPropertyChanged(nameof(EstaAEditar));
             OnPropertyChanged(nameof(TextoFormulario));
         }
 
         private async Task GuardarBebidaAsync()
         {
-            if (string.IsNullOrWhiteSpace(NovaBebidaNome))
+            ErroNome = string.Empty;
+            ErroPreco = string.Empty;
+            var nome = NovaBebidaNome.Trim();
+            var bebidaComMesmoNome = Bebidas.FirstOrDefault(b =>
+                !ReferenceEquals(b, _bebidaEmEdicao) &&
+                string.Equals(b.Nome.Trim(), nome, StringComparison.OrdinalIgnoreCase));
+
+            if (string.IsNullOrWhiteSpace(nome))
             {
-                await Shell.Current.DisplayAlertAsync("Erro", "Por favor, introduza o nome da bebida.", "OK");
-                return;
+                ErroNome = "Introduza o nome da bebida.";
+            }
+            else if (bebidaComMesmoNome is not null)
+            {
+                ErroNome = "Já existe uma bebida com este nome.";
             }
 
-            if (!decimal.TryParse(NovaBebidaPreco, NumberStyles.Number, CultureInfo.GetCultureInfo("pt-PT"), out var preco) || preco < 0)
+            if (!decimal.TryParse(NovaBebidaPreco, NumberStyles.Number, CultureInfo.GetCultureInfo("pt-PT"), out var preco) || preco <= 0)
             {
-                await Shell.Current.DisplayAlertAsync("Erro", "Por favor, introduza um preço válido.", "OK");
-                return;
+                ErroPreco = "Introduza um preço superior a zero.";
             }
+
+            if (!string.IsNullOrEmpty(ErroNome) || !string.IsNullOrEmpty(ErroPreco)) return;
 
             if (_bebidaEmEdicao is null)
             {
                 await _bebidasService.AddAsync(new Bebida
                 {
                     Nome = NovaBebidaNome.Trim(),
-                    Preco = preco
+                    Preco = preco,
+                    Categoria = NovaBebidaCategoria.Trim()
                 });
             }
             else
             {
                 _bebidaEmEdicao.Nome = NovaBebidaNome.Trim();
                 _bebidaEmEdicao.Preco = preco;
+                _bebidaEmEdicao.Categoria = NovaBebidaCategoria.Trim();
                 await _bebidasService.UpdateAsync(_bebidaEmEdicao);
             }
 
@@ -114,6 +146,17 @@ namespace RaizBarApp.PageModels
             if (bebida is null)
             {
                 return;
+            }
+
+            if (bebida.Quantidade > 0)
+            {
+                var removeDoPedido = await Shell.Current.DisplayAlertAsync(
+                    "Bebida no pedido atual",
+                    $"Esta bebida está no pedido atual com quantidade {bebida.Quantidade}. Eliminar mesmo assim?",
+                    "Eliminar",
+                    "Cancelar");
+                if (!removeDoPedido) return;
+                bebida.Quantidade = 0;
             }
 
             var confirmou = await Shell.Current.DisplayAlertAsync(
@@ -133,6 +176,9 @@ namespace RaizBarApp.PageModels
             _bebidaEmEdicao = null;
             NovaBebidaNome = string.Empty;
             NovaBebidaPreco = string.Empty;
+            NovaBebidaCategoria = CategoriasBebidas.Todas[0];
+            ErroNome = string.Empty;
+            ErroPreco = string.Empty;
             OnPropertyChanged(nameof(EstaAEditar));
             OnPropertyChanged(nameof(TextoFormulario));
         }
@@ -145,6 +191,22 @@ namespace RaizBarApp.PageModels
         public Task AtualizarBebidaAsync(Bebida bebida)
         {
             return _bebidasService.UpdateAsync(bebida);
+        }
+
+        public async Task MostrarMigracoesCategoriasAsync()
+        {
+            var migracoes = await _bebidasService.ConsumirMigracoesCategoriasAsync();
+            if (migracoes.Count == 0)
+            {
+                return;
+            }
+
+            var detalhes = string.Join(Environment.NewLine, migracoes.Select(migracao =>
+                $"{migracao.NomeBebida}: '{migracao.CategoriaAnterior}' → '{migracao.CategoriaNova}'"));
+            await Shell.Current.DisplayAlertAsync(
+                "Categorias normalizadas",
+                $"As seguintes bebidas foram reatribuídas:{Environment.NewLine}{detalhes}",
+                "Confirmar");
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

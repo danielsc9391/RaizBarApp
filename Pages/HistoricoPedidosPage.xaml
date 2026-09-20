@@ -14,7 +14,7 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
-        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" />
+        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" ShowHamburger="True" />
         <Grid Grid.Row="1" Padding="{StaticResource LayoutPadding}" RowSpacing="{StaticResource LayoutSpacing}" VerticalOptions="Fill">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -40,24 +40,19 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:PedidoHistorico">
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="🗑 Eliminar" BackgroundColor="#C85C5C" Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.RemoverPedidoCommand}" CommandParameter="{Binding .}" />
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
                             <Frame Padding="10" Margin="5" HasShadow="True" IsVisible="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                                 <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="5" IsVisible="True">
                                     <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10" IsVisible="True">
                                         <Label Grid.Column="0" Text="{Binding DataHora, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Style="{StaticResource Title3}"
                                                IsVisible="True"
                                                TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto" ColumnSpacing="5">
-                                            <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" Padding="0"
-                                                    HorizontalOptions="Center" VerticalOptions="Center"
-                                                    BackgroundColor="#C85C5C" StrokeThickness="0"
-                                                    AutomationProperties.Name="Eliminar pedido do histórico">
-                                                <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.RemoverPedidoCommand}"
-                                                                          CommandParameter="{Binding .}" />
-                                                </Border.GestureRecognizers>
-                                                  <Image Source="{StaticResource IconDeleteDanger}" WidthRequest="22" HeightRequest="22"
-                                                      HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
-                                            </Border>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto" ColumnSpacing="8">
                                             <Border Grid.Column="1" WidthRequest="48" HeightRequest="48" Padding="0"
                                                     HorizontalOptions="Center" VerticalOptions="Center"
                                                     BackgroundColor="#5C82C8" StrokeThickness="0"
@@ -68,6 +63,20 @@
                                                 </Border.GestureRecognizers>
                                                   <Image Source="{StaticResource IconEdit}" WidthRequest="22" HeightRequest="22"
                                                       HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
+                                            </Border>
+                                            <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" Padding="0"
+                                                    HorizontalOptions="Center" VerticalOptions="Center"
+                                                    BackgroundColor="#C85C5C" StrokeThickness="0"
+                                                    AutomationProperties.Name="Eliminar pedido do histórico">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="24" />
+                                                </Border.StrokeShape>
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.RemoverPedidoCommand}"
+                                                                          CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Image Source="{StaticResource IconDeleteDanger}" WidthRequest="24" HeightRequest="24"
+                                                       HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
                                             </Border>
                                         </Grid>
                                     </Grid>
@@ -90,6 +99,7 @@
                                          TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                 </Grid>
                             </Frame>
+                            </SwipeView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

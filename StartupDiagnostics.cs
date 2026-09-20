@@ -14,7 +14,7 @@ internal static class StartupDiagnostics
 
     public static void LogException(string location, Exception exception)
     {
-        var message = $"[{DateTimeOffset.UtcNow:O}] Startup failure in {location}: {exception}";
+        var message = $"[{DateTimeOffset.UtcNow:O}] Failure in {location}: {exception}";
         Debug.WriteLine(message);
         Trace.WriteLine(message);
         Console.Error.WriteLine(message);
