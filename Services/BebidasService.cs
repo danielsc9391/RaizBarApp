@@ -13,6 +13,8 @@ public sealed class BebidasService
     public ObservableCollection<Bebida> Bebidas { get; } = new();
     private IReadOnlyList<MigracaoCategoriaBebida> _migracoesCategorias = Array.Empty<MigracaoCategoriaBebida>();
 
+    public Task EnsureLoadedAsync() => _initializationTask;
+
     public BebidasService(BebidaRepository bebidaRepository)
     {
         _bebidaRepository = bebidaRepository;
@@ -109,23 +111,15 @@ public sealed class BebidasService
     private static string EncontrarCategoria(string categoria)
     {
         var normalizada = NormalizarTexto(categoria);
-        if (normalizada.Length == 0)
+        return normalizada switch
         {
-            return "Outros";
-        }
-
-        var correspondencia = CategoriasBebidas.Todas
-            .Select(opcao => new
-            {
-                Opcao = opcao,
-                Distancia = DistanciaLevenshtein(normalizada, NormalizarTexto(opcao))
-            })
-            .OrderBy(item => item.Distancia)
-            .ToList();
-
-        var melhor = correspondencia[0];
-        var semelhanca = 1d - (double)melhor.Distancia / Math.Max(normalizada.Length, NormalizarTexto(melhor.Opcao).Length);
-        return semelhanca >= 0.8d ? melhor.Opcao : "Outros";
+            "agua" => "Água",
+            "refrigerante" => "Refrigerante",
+            "cerveja" or "vinho" or "destilados" => "Álcool",
+            "alcool" => "Álcool",
+            "outros" => "Outros",
+            _ => "Outros"
+        };
     }
 
     private static string NormalizarTexto(string texto)
@@ -141,26 +135,6 @@ public sealed class BebidasService
         }
 
         return builder.ToString();
-    }
-
-    private static int DistanciaLevenshtein(string esquerda, string direita)
-    {
-        var distances = new int[esquerda.Length + 1, direita.Length + 1];
-        for (var i = 0; i <= esquerda.Length; i++) distances[i, 0] = i;
-        for (var j = 0; j <= direita.Length; j++) distances[0, j] = j;
-
-        for (var i = 1; i <= esquerda.Length; i++)
-        {
-            for (var j = 1; j <= direita.Length; j++)
-            {
-                var custo = esquerda[i - 1] == direita[j - 1] ? 0 : 1;
-                distances[i, j] = Math.Min(
-                    Math.Min(distances[i - 1, j] + 1, distances[i, j - 1] + 1),
-                    distances[i - 1, j - 1] + custo);
-            }
-        }
-
-        return distances[esquerda.Length, direita.Length];
     }
 
     private Task SaveAsync()

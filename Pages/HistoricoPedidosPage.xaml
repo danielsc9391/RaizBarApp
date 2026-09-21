@@ -53,9 +53,9 @@
                                                IsVisible="True"
                                                TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                         <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto" ColumnSpacing="8">
-                                            <Border Grid.Column="1" WidthRequest="48" HeightRequest="48" Padding="0"
+                                            <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" Padding="0"
                                                     HorizontalOptions="Center" VerticalOptions="Center"
-                                                    BackgroundColor="#5C82C8" StrokeThickness="0"
+                                                    Style="{StaticResource EditButtonStyle}"
                                                     AutomationProperties.Name="Editar pedido do histórico">
                                                 <Border.GestureRecognizers>
                                                     <TapGestureRecognizer Command="{Binding Source={x:Reference HistoricoRoot}, Path=BindingContext.EditPedidoCommand}"
@@ -64,7 +64,7 @@
                                                   <Image Source="{StaticResource IconEdit}" WidthRequest="22" HeightRequest="22"
                                                       HorizontalOptions="Center" VerticalOptions="Center" Aspect="AspectFit" />
                                             </Border>
-                                            <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" Padding="0"
+                                            <Border Grid.Column="1" WidthRequest="48" HeightRequest="48" Padding="0"
                                                     HorizontalOptions="Center" VerticalOptions="Center"
                                                     BackgroundColor="#C85C5C" StrokeThickness="0"
                                                     AutomationProperties.Name="Eliminar pedido do histórico">

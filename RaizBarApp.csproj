@@ -97,4 +97,10 @@
 		<TrimmerRootAssembly Include="System.ObjectModel" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="Pages\EstatisticasPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

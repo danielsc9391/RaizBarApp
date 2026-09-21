@@ -32,6 +32,12 @@
         ContentTemplate="{DataTemplate pages:HistoricoPedidosPage}"
         Route="historico-pedidos" />
 
+    <ShellContent
+        Title="Estatísticas"
+        Icon="{StaticResource IconProjects}"
+        ContentTemplate="{DataTemplate pages:EstatisticasPage}"
+        Route="estatisticas" />
+
     <Shell.FlyoutFooter>
         <Grid Padding="15">
             <sf:SfSegmentedControl x:Name="ThemeSegmentedControl" 

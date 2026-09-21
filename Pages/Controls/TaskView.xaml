@@ -8,7 +8,7 @@
     xmlns:shimmer="clr-namespace:Syncfusion.Maui.Toolkit.Shimmer;assembly=Syncfusion.Maui.Toolkit"
     x:Class="RaizBarApp.Pages.Controls.TaskView"
     StrokeShape="RoundRectangle 20"
-    Background="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
+    Background="{AppThemeBinding Light={StaticResource TagBackgroundLight}, Dark={StaticResource TagBackgroundDark}}"
     x:DataType="models:ProjectTask">
     
      <effectsView:SfEffectsView

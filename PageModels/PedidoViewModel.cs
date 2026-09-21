@@ -123,7 +123,12 @@ public class PedidoViewModel : INotifyPropertyChanged
         var grupos = Bebidas
             .GroupBy(b => CategoriasBebidas.Todas.FirstOrDefault(categoria =>
                 string.Equals(categoria, b.Categoria?.Trim(), StringComparison.OrdinalIgnoreCase)) ?? "Outros")
-            .OrderBy(g => g.Key)
+            .Where(g => g.Any())
+            .OrderBy(g =>
+            {
+                var indice = CategoriasBebidas.Todas.ToList().IndexOf(g.Key);
+                return indice < 0 ? int.MaxValue : indice;
+            })
             .Select(g => new CategoriaBebidasGroup(g.Key, g.OrderBy(b => b.Nome)))
             .ToList();
 
@@ -232,6 +237,7 @@ public class PedidoViewModel : INotifyPropertyChanged
                     pedidoParaAtualizar.Bebidas.Add(new Bebida
                     {
                         Nome = bebida.Nome,
+                        Categoria = bebida.Categoria,
                         Preco = bebida.Preco,
                         Quantidade = bebida.Quantidade
                     });
@@ -256,6 +262,7 @@ public class PedidoViewModel : INotifyPropertyChanged
                     Bebidas = Bebidas.Where(b => b.Quantidade > 0).Select(b => new Bebida
                     {
                         Nome = b.Nome,
+                        Categoria = b.Categoria,
                         Preco = b.Preco,
                         Quantidade = b.Quantidade
                     }).ToList(),

@@ -17,19 +17,21 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" Padding="16" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+                <Border Grid.Row="0" Padding="16" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource TagBackgroundLight}, Dark={StaticResource TagBackgroundDark}}">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="Gerir bebidas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                         <Entry Placeholder="Nome da bebida" Text="{Binding NovaBebidaNome}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                         <Label Text="{Binding ErroNome}" TextColor="#C85C5C" IsVisible="{Binding TemErroNome}" />
                          <Picker Title="Categoria" ItemsSource="{Binding CategoriasDisponiveis}" SelectedItem="{Binding NovaBebidaCategoria}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                        <HorizontalStackLayout Spacing="10">
-                            <Entry x:Name="PrecoEntry" Placeholder="Preço (€)" Keyboard="Numeric" Text="{Binding NovaBebidaPreco}" TextChanged="PrecoEntry_TextChanged" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                            <Label Text="€" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-                        </HorizontalStackLayout>
+                        <Border Padding="0" StrokeThickness="1" BackgroundColor="{AppThemeBinding Light={StaticResource TagBackgroundLight}, Dark={StaticResource TagBackgroundDark}}" Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" HorizontalOptions="FillAndExpand">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="0">
+                                <Entry Grid.Column="0" x:Name="PrecoEntry" Placeholder="Preço" Keyboard="Numeric" Text="{Binding NovaBebidaPreco}" TextChanged="PrecoEntry_TextChanged" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="1" Text="€" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" Padding="0,0,12,0" />
+                            </Grid>
+                        </Border>
                         <Label Text="{Binding ErroPreco}" TextColor="#C85C5C" IsVisible="{Binding TemErroPreco}" />
-                        <HorizontalStackLayout Spacing="10">
-                            <Button Text="{Binding TextoFormulario}" Command="{Binding AddBebidaCommand}" Style="{StaticResource ActionConfirmButtonStyle}" HorizontalOptions="FillAndExpand" />
+                        <HorizontalStackLayout HorizontalOptions="End" Spacing="10">
+                            <Button Text="{Binding TextoFormulario}" Command="{Binding AddBebidaCommand}" Style="{StaticResource ActionConfirmButtonStyle}" HorizontalOptions="End" WidthRequest="120" />
                             <Button Text="Cancelar" Command="{Binding CancelarEdicaoCommand}" IsVisible="{Binding EstaAEditar}" Style="{StaticResource ActionDangerButtonStyle}" />
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
@@ -56,15 +58,12 @@
                                         <SwipeItem Text="🗑 Eliminar" BackgroundColor="#C85C5C" Command="{Binding Source={x:Reference ManageBebidasRoot}, Path=BindingContext.RemoveBebidaCommand}" CommandParameter="{Binding .}" />
                                     </SwipeItems>
                                 </SwipeView.RightItems>
-                            <Frame Padding="12" Margin="5" CornerRadius="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+                            <Frame Padding="12" Margin="5" CornerRadius="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource TagBackgroundLight}, Dark={StaticResource TagBackgroundDark}}">
                                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                                     <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                     <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                     <HorizontalStackLayout Grid.Column="2" Spacing="8" VerticalOptions="Center">
-                                        <Border WidthRequest="48" HeightRequest="48" Padding="0"
-                                                HorizontalOptions="Center" VerticalOptions="Center"
-                                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
-                                                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" StrokeThickness="1"
+                                        <Border Style="{StaticResource EditButtonStyle}"
                                                 AutomationProperties.Name="Editar bebida">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding Source={x:Reference ManageBebidasRoot}, Path=BindingContext.EditBebidaCommand}"

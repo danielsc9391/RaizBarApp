@@ -40,6 +40,8 @@
     <Color x:Key="LightPrimary">#A85D3F</Color>
     <Color x:Key="DarkText">#FBC791</Color>
     <Color x:Key="DarkPrimary">#FBC791</Color>
+    <Color x:Key="TagBackgroundLight">#F0C9A0</Color>
+    <Color x:Key="TagBackgroundDark">#8C5A3E</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>

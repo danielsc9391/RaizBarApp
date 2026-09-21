@@ -384,13 +384,23 @@
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource TagBackgroundLight}, Dark={StaticResource TagBackgroundDark}}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver" />
                 </VisualStateGroup>
             </VisualStateGroupList>
         </Setter>
+    </Style>
+
+    <Style TargetType="Border" x:Key="EditButtonStyle">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" />
+        <Setter Property="StrokeThickness" Value="0"/>
+        <Setter Property="WidthRequest" Value="48"/>
+        <Setter Property="HeightRequest" Value="48"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
     </Style>
 
     <Style TargetType="Page" ApplyToDerivedTypes="True">
@@ -425,7 +435,7 @@
     </Style>
 
     <Style TargetType="shimmer:SfShimmer">
-        <Setter Property="Fill" Value="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}" />
+        <Setter Property="Fill" Value="{AppThemeBinding Light={StaticResource TagBackgroundLight}, Dark={StaticResource TagBackgroundDark}}" />
         <Setter Property="WaveColor" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
     </Style>
 

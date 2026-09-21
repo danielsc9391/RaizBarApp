@@ -123,7 +123,7 @@
                                     <VisualStateGroup x:Name="CommonStates">
                                         <VisualState x:Name="Normal">
                                             <VisualState.Setters>
-                                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightSecondaryBackground},Dark={StaticResource DarkSecondaryBackground}}"/>
+                                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource TagBackgroundLight},Dark={StaticResource TagBackgroundDark}}"/>
                                                 <Setter TargetName="TagLabel" Property="Label.TextColor" Value="{AppThemeBinding Light={StaticResource DarkOnLightBackground},Dark={StaticResource LightOnDarkBackground}}"/>
                                             </VisualState.Setters>
                                         </VisualState>

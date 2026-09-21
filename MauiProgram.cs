@@ -58,6 +58,7 @@ namespace RaizBarApp
                 builder.Services.AddSingleton<ManageMetaPageModel>();
                 builder.Services.AddSingleton<ManageBebidasPageModel>();
                 builder.Services.AddTransient<HistoricoPedidosPageModel>();
+                builder.Services.AddTransient<EstatisticasPageModel>();
 
                 builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
                 builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");

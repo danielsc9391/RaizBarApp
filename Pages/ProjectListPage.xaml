@@ -31,7 +31,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Project">
                     <Border 
-                        Background="{AppThemeBinding Light={StaticResource LightSecondaryBackground},Dark={StaticResource DarkSecondaryBackground}}"
+                        Background="{AppThemeBinding Light={StaticResource TagBackgroundLight},Dark={StaticResource TagBackgroundDark}}"
                         SemanticProperties.Description="{Binding Name, StringFormat='{0}'}">
                         <VerticalStackLayout Padding="10">
                             <Label Text="{Binding Name}" FontSize="24" />

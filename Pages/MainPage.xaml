@@ -58,7 +58,7 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:Bebida">
-                                    <Frame Padding="10" Margin="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+                                    <Frame Padding="10" Margin="5" HasShadow="True" BackgroundColor="{AppThemeBinding Light={StaticResource TagBackgroundLight}, Dark={StaticResource TagBackgroundDark}}">
                                         <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
                                             <Label Grid.Column="0" Text="{Binding Nome}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
                                             <Label Grid.Column="1" Text="{Binding Preco, StringFormat='{}{0:C}'}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />

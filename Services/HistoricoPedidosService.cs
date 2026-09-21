@@ -2,6 +2,7 @@ using RaizBarApp.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text;
 
 namespace RaizBarApp.Services;
 
@@ -9,11 +10,13 @@ public sealed class HistoricoPedidosService
 {
     private readonly string _filePath;
     private readonly Task _initializationTask;
+    private readonly BebidasService _bebidasService;
 
     public ObservableCollection<PedidoHistorico> Pedidos { get; } = new();
 
-    public HistoricoPedidosService()
+    public HistoricoPedidosService(BebidasService bebidasService)
     {
+        _bebidasService = bebidasService;
         try
         {
             var appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -157,7 +160,12 @@ public sealed class HistoricoPedidosService
                 return;
             }
 
+            var categoriasMigradas = await MigrarCategoriasEmFaltaAsync(pedidos);
             await ReplacePedidosAsync(pedidos);
+            if (categoriasMigradas)
+            {
+                await SaveAsync();
+            }
         }
         catch (JsonException exception)
         {
@@ -183,6 +191,58 @@ public sealed class HistoricoPedidosService
             Debug.WriteLine($"Detalhes do erro: {exception}");
             await ReplacePedidosAsync([]);
         }
+    }
+
+    private async Task<bool> MigrarCategoriasEmFaltaAsync(IEnumerable<PedidoHistorico> pedidos)
+    {
+        await _bebidasService.EnsureLoadedAsync();
+
+        var bebidasPorNome = _bebidasService.Bebidas
+            .Where(bebida => !string.IsNullOrWhiteSpace(bebida.Nome))
+            .GroupBy(bebida => NormalizarNome(bebida.Nome))
+            .ToDictionary(grupo => grupo.Key, grupo => grupo.First().Categoria);
+
+        var houveAlteracoes = false;
+        foreach (var bebidaHistorica in pedidos.SelectMany(pedido => pedido.Bebidas ?? []))
+        {
+            if (!string.IsNullOrWhiteSpace(bebidaHistorica.Categoria))
+            {
+                continue;
+            }
+
+            if (bebidasPorNome.TryGetValue(NormalizarNome(bebidaHistorica.Nome), out var categoria))
+            {
+                bebidaHistorica.Categoria = categoria;
+            }
+
+            else
+            {
+                bebidaHistorica.Categoria = "Outros";
+            }
+
+            houveAlteracoes = true;
+        }
+
+        return houveAlteracoes;
+    }
+
+    private static string NormalizarNome(string? nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome))
+        {
+            return string.Empty;
+        }
+
+        var builder = new StringBuilder();
+        foreach (var character in nome)
+        {
+            if (!char.IsWhiteSpace(character))
+            {
+                builder.Append(char.ToUpperInvariant(character));
+            }
+        }
+
+        return builder.ToString();
     }
 
     private Task ReplacePedidosAsync(IEnumerable<PedidoHistorico> pedidos)

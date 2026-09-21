@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pageModels="clr-namespace:RaizBarApp.PageModels"
+             xmlns:models="clr-namespace:RaizBarApp.Models"
+             xmlns:shared="clr-namespace:RaizBarApp.Views.Shared"
+             x:Class="RaizBarApp.Pages.EstatisticasPage"
+             x:DataType="pageModels:EstatisticasPageModel">
+    <Grid RowDefinitions="Auto,*">
+        <shared:AppHeader Grid.Row="0" Margin="0,0,0,8" ShowHamburger="True" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="{StaticResource LayoutPadding}" Spacing="20">
+                <Label Text="Estatísticas" Style="{StaticResource Title2}" SemanticProperties.HeadingLevel="Level1"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+
+                <Label Text="Ainda não há dados suficientes para gerar estatísticas"
+                       IsVisible="{Binding SemDados}" HorizontalOptions="Center" VerticalOptions="Center"
+                       Margin="0,40" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+
+                <VerticalStackLayout IsVisible="{Binding TemDados}" Spacing="20">
+                    <Border Padding="14" StrokeThickness="1"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}">
+                        <VerticalStackLayout Spacing="12">
+                            <Label Text="1. Faturação por Categoria" Style="{StaticResource Title3}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            <CollectionView ItemsSource="{Binding FaturacaoPorCategoria}" SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:EstatisticaCategoria">
+                                        <Grid ColumnDefinitions="110,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="4" Padding="0,4">
+                                            <Label Grid.RowSpan="2" Text="{Binding Categoria}" VerticalOptions="Center"
+                                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                            <Grid Grid.Column="1" HeightRequest="18" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+                                                <BoxView WidthRequest="{Binding LarguraBarra}" HorizontalOptions="Start"
+                                                         BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" />
+                                            </Grid>
+                                            <Label Grid.Column="2" Text="{Binding FaturacaoFormatada}" HorizontalOptions="End"
+                                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding PercentagemFormatada}" FontSize="12"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
+                            <Grid ColumnDefinitions="*,80,100" ColumnSpacing="14">
+                                <Label Text="Total" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="2" Text="{Binding TotalFaturacaoFormatada}" FontAttributes="Bold"
+                                       HorizontalTextAlignment="End" HorizontalOptions="End"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Padding="14" StrokeThickness="1"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}">
+                        <VerticalStackLayout Spacing="14">
+                            <Label Text="2. Quantidades e Faturação" Style="{StaticResource Title3}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            <Label Text="Por categoria" Style="{StaticResource Title4}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            <Grid ColumnDefinitions="*,80,100" ColumnSpacing="14">
+                                <Label Text="Categoria" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="1" Text="Qtd." FontAttributes="Bold" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="2" Text="Faturação" FontAttributes="Bold" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            </Grid>
+                            <CollectionView ItemsSource="{Binding FaturacaoPorCategoria}" SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:EstatisticaCategoria">
+                                        <Grid ColumnDefinitions="*,80,100" ColumnSpacing="14" Padding="0,3">
+                                            <Label Text="{Binding Categoria}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                            <Label Grid.Column="1" Text="{Binding Quantidade}" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                            <Label Grid.Column="2" Text="{Binding FaturacaoFormatada}" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                            <Label Text="Por bebida" Style="{StaticResource Title4}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            <Grid ColumnDefinitions="*,80,100" ColumnSpacing="14">
+                                <Label Text="Bebida / Categoria" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="1" Text="Qtd." FontAttributes="Bold" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="2" Text="Faturação" FontAttributes="Bold" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            </Grid>
+                            <CollectionView ItemsSource="{Binding FaturacaoPorBebida}" SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:EstatisticaBebida">
+                                        <Grid ColumnDefinitions="*,80,100" ColumnSpacing="14" Padding="0,3">
+                                            <VerticalStackLayout Spacing="0">
+                                                <Label Text="{Binding Nome}" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                                <Label Text="{Binding Categoria}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1" Text="{Binding Quantidade}" HorizontalTextAlignment="End" HorizontalOptions="End" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                            <Label Grid.Column="2" Text="{Binding FaturacaoFormatada}" HorizontalTextAlignment="End" HorizontalOptions="End" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
+                            <Grid ColumnDefinitions="*,80,100" ColumnSpacing="14">
+                                <Label Text="Total geral" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="1" Text="{Binding TotalQuantidade}" FontAttributes="Bold" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                <Label Grid.Column="2" Text="{Binding TotalFaturacaoFormatada}" FontAttributes="Bold" HorizontalTextAlignment="End" HorizontalOptions="End" TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Padding="14" StrokeThickness="1"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}">
+                        <VerticalStackLayout Spacing="12">
+                            <Label Text="3. Horário de Pico" Style="{StaticResource Title3}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                            <Label Text="{Binding HoraDePico}" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" />
+                            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                                <HorizontalStackLayout BindableLayout.ItemsSource="{Binding PedidosPorHora}" Spacing="3" HeightRequest="190">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="models:EstatisticaHora">
+                                            <Grid WidthRequest="24" HeightRequest="185" RowDefinitions="*,Auto" RowSpacing="3">
+                                                <Grid Grid.Row="0" HeightRequest="150" VerticalOptions="End">
+                                                    <BoxView HeightRequest="{Binding AlturaBarra}" VerticalOptions="End"
+                                                             BackgroundColor="{AppThemeBinding Light={StaticResource LightPrimary}, Dark={StaticResource DarkPrimary}}" />
+                                                </Grid>
+                                                <Label Grid.Row="1" Text="{Binding HoraFormatada}" FontSize="10" HorizontalTextAlignment="Center"
+                                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+                            </ScrollView>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -4,10 +4,9 @@ public static class CategoriasBebidas
 {
     public static IReadOnlyList<string> Todas { get; } = new[]
     {
-        "Cerveja",
-        "Vinho",
+        "Água",
         "Refrigerante",
-        "Destilados",
+        "Álcool",
         "Outros"
     };
 }
